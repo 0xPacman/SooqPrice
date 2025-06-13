@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -10,13 +10,20 @@ import {
   SimpleGrid,
   Alert,
   AlertIcon,
+  Button,
 } from '@chakra-ui/react';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { mockUsers, mockPriceSubmissions, mockCities, mockMarkets } from '@/utils/mockData';
+import { SettingsIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
+import ComingSoonModal from '@/components/common/ComingSoonModal';
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
+  const [userManagementModalOpen, setUserManagementModalOpen] = useState(false);
+  const [submissionReviewModalOpen, setSubmissionReviewModalOpen] = useState(false);
+  const [analyticsModalOpen, setAnalyticsModalOpen] = useState(false);
+  const [rewardsModalOpen, setRewardsModalOpen] = useState(false);
 
   if (!user?.isAuthenticated || !user?.profile?.isAdmin) {
     return <Navigate to="/" replace />;
@@ -130,15 +137,85 @@ const AdminDashboard: React.FC = () => {
         <Card>
           <CardBody>
             <VStack spacing={4}>
-              <Heading size="md">Coming Soon</Heading>
-              <Text color="gray.600" textAlign="center">
-                The full admin dashboard with user management, submission moderation, 
-                analytics, and reward distribution will be available in Phase 4 of development.
+              <Heading size="md">Admin Actions</Heading>
+              <Text color="gray.600" textAlign="center" mb={4}>
+                Advanced admin features will be available in Phase 4 of development.
               </Text>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4} w="full">
+                <Button
+                  leftIcon={<EditIcon />}
+                  colorScheme="blue"
+                  variant="outline"
+                  onClick={() => setUserManagementModalOpen(true)}
+                >
+                  User Management
+                </Button>
+                <Button
+                  leftIcon={<ViewIcon />}
+                  colorScheme="orange"
+                  variant="outline"
+                  onClick={() => setSubmissionReviewModalOpen(true)}
+                >
+                  Review Submissions
+                </Button>
+                <Button
+                  leftIcon={<SettingsIcon />}
+                  colorScheme="purple"
+                  variant="outline"
+                  onClick={() => setAnalyticsModalOpen(true)}
+                >
+                  Analytics
+                </Button>
+                <Button
+                  leftIcon={<SettingsIcon />}
+                  colorScheme="green"
+                  variant="outline"
+                  onClick={() => setRewardsModalOpen(true)}
+                >
+                  Rewards System
+                </Button>
+              </SimpleGrid>
             </VStack>
           </CardBody>
         </Card>
       </VStack>
+
+      {/* Coming Soon Modals */}
+      <ComingSoonModal
+        isOpen={userManagementModalOpen}
+        onClose={() => setUserManagementModalOpen(false)}
+        title="User Management"
+        description="Manage user accounts, verify users, handle bans, and monitor user activity"
+        icon="👥"
+        expectedRelease="Phase 4 - Coming Soon"
+      />
+
+      <ComingSoonModal
+        isOpen={submissionReviewModalOpen}
+        onClose={() => setSubmissionReviewModalOpen(false)}
+        title="Submission Review"
+        description="Review and moderate price submissions, approve or reject entries, and manage quality control"
+        icon="📋"
+        expectedRelease="Phase 4 - Coming Soon"
+      />
+
+      <ComingSoonModal
+        isOpen={analyticsModalOpen}
+        onClose={() => setAnalyticsModalOpen(false)}
+        title="Admin Analytics"
+        description="Detailed platform analytics, user engagement metrics, and performance insights"
+        icon="📊"
+        expectedRelease="Phase 4 - Coming Soon"
+      />
+
+      <ComingSoonModal
+        isOpen={rewardsModalOpen}
+        onClose={() => setRewardsModalOpen(false)}
+        title="Rewards Management"
+        description="Configure reward systems, manage leaderboards, and distribute monthly prizes"
+        icon="🏆"
+        expectedRelease="Phase 4 - Coming Soon"
+      />
     </Container>
   );
 };

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, HStack, IconButton, Text, VStack } from '@chakra-ui/react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Icon,
   IconProps
 } from '@chakra-ui/react';
+import ComingSoonModal from '@/components/common/ComingSoonModal';
 
 // Custom icons since Chakra UI doesn't have all the icons we need
 const HomeIcon = (props: IconProps) => (
@@ -54,52 +55,83 @@ const PersonIcon = (props: IconProps) => (
 
 const MobileNavigation: React.FC = () => {
   const location = useLocation();
+  const [activityModalOpen, setActivityModalOpen] = useState(false);
 
   const navItems = [
     {
       icon: HomeIcon,
       label: 'Home',
       path: '/',
+      type: 'link' as const,
     },
     {
       icon: SearchIcon,
       label: 'Markets',
       path: '/markets',
+      type: 'link' as const,
     },
     {
       icon: AddIcon,
       label: 'Submit',
       path: '/submit',
+      type: 'link' as const,
     },
     {
       icon: BellIcon,
       label: 'Activity',
       path: '/activity',
+      type: 'modal' as const,
+      modalHandler: () => setActivityModalOpen(true),
     },
     {
       icon: PersonIcon,
       label: 'Profile',
       path: '/profile',
+      type: 'link' as const,
     },
   ];
 
   return (
-    <Box
-      position="fixed"
-      bottom={0}
-      left={0}
-      right={0}
-      bg="white"
-      borderTop="1px"
-      borderColor="gray.200"
-      boxShadow="0 -2px 10px rgba(0,0,0,0.1)"
-      zIndex={1000}
-      display={{ base: "block", md: "none" }}
-    >
+    <>
+      <Box
+        position="fixed"
+        bottom={0}
+        left={0}
+        right={0}
+        bg="white"
+        borderTop="1px"
+        borderColor="gray.200"
+        boxShadow="0 -2px 10px rgba(0,0,0,0.1)"
+        zIndex={1000}
+        display={{ base: "block", md: "none" }}
+      >
       <HStack spacing={0} justify="space-around" py={2}>
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
+          
+          if (item.type === 'modal') {
+            return (
+              <VStack
+                key={item.path}
+                spacing={1}
+                py={2}
+                px={3}
+                flex={1}
+                align="center"
+                color={isActive ? 'green.500' : 'gray.500'}
+                _hover={{ color: 'green.400' }}
+                transition="color 0.2s"
+                cursor="pointer"
+                onClick={item.modalHandler}
+              >
+                <Icon boxSize={5} />
+                <Text fontSize="xs" fontWeight={isActive ? 'medium' : 'normal'}>
+                  {item.label}
+                </Text>
+              </VStack>
+            );
+          }
           
           return (
             <VStack
@@ -124,6 +156,23 @@ const MobileNavigation: React.FC = () => {
         })}
       </HStack>
     </Box>
+
+    {/* Coming Soon Modal */}
+    <ComingSoonModal
+      isOpen={activityModalOpen}
+      onClose={() => setActivityModalOpen(false)}
+      title="Activity Feed"
+      description="Stay updated with real-time price submissions, market trends, and community activity."
+      icon="📊"
+      expectedRelease="Phase 2"
+      features={[
+        "Real-time price update notifications",
+        "Community activity timeline",
+        "Personalized market alerts",
+        "Weekly price trend summaries"
+      ]}
+    />
+  </>
   );
 };
 

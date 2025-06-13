@@ -38,7 +38,7 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { ChevronDownIcon, CheckIcon } from '@chakra-ui/icons';
-import { mockProducts } from '../../utils/mockData';
+import { mockProducts, mockMarkets, mockCities } from '../../utils/mockData';
 import { useAuth } from '../../hooks/useAuth';
 
 // Custom icons
@@ -63,13 +63,14 @@ const CameraIcon = (props: any) => (
 interface SwipeablePriceSubmissionDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  marketId: string;
-  marketName: string;
+  marketId?: string; // Make optional
+  marketName?: string; // Make optional
   preselectedProductId?: string;
   onSuccess?: () => void;
 }
 
 interface FormData {
+  marketId: string;
   productId: string;
   price: number;
   unit: string;
@@ -77,7 +78,7 @@ interface FormData {
   notes: string;
 }
 
-const FORM_STEPS = ['product', 'price', 'quality', 'review'] as const;
+const FORM_STEPS = ['market', 'product', 'price', 'quality', 'review'] as const;
 type FormStep = typeof FORM_STEPS[number];
 
 export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDrawerProps> = ({
@@ -91,7 +92,7 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
   const { user } = useAuth();
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentStep, setCurrentStep] = useState<FormStep>('product');
+  const [currentStep, setCurrentStep] = useState<FormStep>(marketId ? 'product' : 'market');
   const [showSuccess, setShowSuccess] = useState(false);
 
   const isMobile = useBreakpointValue({ base: true, md: false }) ?? true;
@@ -108,6 +109,7 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
     trigger,
   } = useForm<FormData>({
     defaultValues: {
+      marketId: marketId || '',
       productId: preselectedProductId || '',
       price: 0,
       unit: 'kg',
@@ -116,7 +118,9 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
     }
   });
 
+  const selectedMarketId = watch('marketId');
   const selectedProductId = watch('productId');
+  const selectedMarket = mockMarkets.find(m => m.id === selectedMarketId);
   const selectedProduct = mockProducts.find(p => p.id === selectedProductId);
   const watchedData = watch();
 
@@ -128,7 +132,7 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
 
   const handleClose = () => {
     reset();
-    setCurrentStep('product');
+    setCurrentStep(marketId ? 'product' : 'market');
     setShowSuccess(false);
     onClose();
   };
@@ -137,6 +141,9 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
     let isValid = false;
     
     switch (currentStep) {
+      case 'market':
+        isValid = await trigger('marketId');
+        break;
       case 'product':
         isValid = await trigger('productId');
         break;
@@ -184,7 +191,7 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       console.log('Price submission:', {
-        marketId,
+        marketId: selectedMarketId,
         userId: user.id,
         ...data,
         submissionDate: new Date(),
@@ -195,7 +202,7 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
       setTimeout(() => {
         toast({
           title: 'Price Submitted Successfully! 🎉',
-          description: `Thank you for contributing to ${marketName}'s price data. You earned +10 reputation points!`,
+          description: `Thank you for contributing to ${selectedMarket?.name}'s price data. You earned +10 reputation points!`,
           status: 'success',
           duration: 5000,
           isClosable: true,
@@ -226,6 +233,74 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
 
   const renderStepContent = () => {
     switch (currentStep) {
+      case 'market':
+        return (
+          <VStack spacing={6} align="stretch" h="full">
+            <Box textAlign="center">
+              <Text fontSize="2xl" mb={2}>🏪</Text>
+              <Text fontSize="lg" fontWeight="bold">Select Market</Text>
+              <Text color="gray.600" fontSize="sm">Choose the market where you want to submit a price</Text>
+            </Box>
+
+            <FormControl isInvalid={!!errors.marketId} isRequired>
+              <FormLabel>Market</FormLabel>
+              <Select
+                placeholder="Search and select a market..."
+                size="lg"
+                {...register('marketId', { required: 'Market is required' })}
+                bg="white"
+                borderColor="gray.300"
+                _hover={{ borderColor: "green.300" }}
+                _focus={{ borderColor: "green.500", boxShadow: "0 0 0 1px #48BB78" }}
+              >
+                {mockCities.map(city => (
+                  <optgroup key={city.id} label={city.name}>
+                    {mockMarkets
+                      .filter(market => market.cityId === city.id)
+                      .map(market => (
+                        <option key={market.id} value={market.id}>
+                          {market.name} - {market.address}
+                        </option>
+                      ))
+                    }
+                  </optgroup>
+                ))}
+              </Select>
+              {errors.marketId && (
+                <Text color="red.500" fontSize="sm" mt={1}>{errors.marketId.message}</Text>
+              )}
+            </FormControl>
+
+            {selectedMarket && (
+              <ScaleFade in={!!selectedMarket}>
+                <Box 
+                  p={4} 
+                  bg="green.50" 
+                  borderRadius="lg" 
+                  borderLeft="4px solid" 
+                  borderColor="green.500"
+                  transition="all 0.3s"
+                  _hover={{ bg: "green.100" }}
+                >
+                  <VStack align="start" spacing={2}>
+                    <Text fontWeight="bold" color="green.700">{selectedMarket.name}</Text>
+                    <Text fontSize="sm" color="green.600">{selectedMarket.address}</Text>
+                    <HStack flexWrap="wrap">
+                      <Badge colorScheme="green">{selectedMarket.marketType}</Badge>
+                      <Text fontSize="sm" color="gray.600">
+                        {(() => {
+                          const city = mockCities.find(c => c.id === selectedMarket.cityId);
+                          return city?.name;
+                        })()}
+                      </Text>
+                    </HStack>
+                  </VStack>
+                </Box>
+              </ScaleFade>
+            )}
+          </VStack>
+        );
+
       case 'product':
         return (
           <VStack spacing={6} align="stretch" h="full">
@@ -248,7 +323,7 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
               >
                 {mockProducts.map(product => (
                   <option key={product.id} value={product.id}>
-                    {product.name} ({product.nameAr})
+                    {product.name}
                   </option>
                 ))}
               </Select>
@@ -440,6 +515,10 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
               <Box p={4} bg="gray.50" borderRadius="lg">
                 <VStack align="stretch" spacing={3}>
                   <HStack justify="space-between">
+                    <Text fontWeight="medium" color="gray.600">Market:</Text>
+                    <Text fontWeight="bold">{selectedMarket?.name}</Text>
+                  </HStack>
+                  <HStack justify="space-between">
                     <Text fontWeight="medium" color="gray.600">Product:</Text>
                     <Text fontWeight="bold">{selectedProduct?.name}</Text>
                   </HStack>
@@ -454,10 +533,6 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
                     <Badge colorScheme={qualityOptions.find(q => q.value === watchedData.quality)?.color}>
                       {qualityOptions.find(q => q.value === watchedData.quality)?.label}
                     </Badge>
-                  </HStack>
-                  <HStack justify="space-between">
-                    <Text fontWeight="medium" color="gray.600">Market:</Text>
-                    <Text fontWeight="bold">{marketName}</Text>
                   </HStack>
                   {watchedData.notes && (
                     <>
@@ -624,7 +699,10 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
                   flex={2}
                   size={isMobile ? "lg" : "md"}
                   h={isMobile ? "48px" : "auto"}
-                  isDisabled={currentStep === 'product' && !selectedProductId}
+                  isDisabled={
+                    (currentStep === 'market' && !selectedMarketId) ||
+                    (currentStep === 'product' && !selectedProductId)
+                  }
                   _disabled={{
                     opacity: 0.4,
                     cursor: 'not-allowed'

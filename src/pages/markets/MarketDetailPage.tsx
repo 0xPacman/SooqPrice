@@ -180,8 +180,7 @@ const MarketDetailPage: React.FC = () => {
               <HStack justify="space-between" w="full" align="start">
                 <VStack align="start" spacing={2} flex={1}>
                   <Heading size="xl">{market.name}</Heading>
-                  <Text fontSize="lg" color="gray.600">{market.nameAr}</Text>
-                  <Text color="gray.500">{market.nameFr}</Text>
+                  <Text fontSize="lg" color="gray.600">{market.address}</Text>
                 </VStack>
                 
                 <VStack align="end" spacing={2}>
@@ -284,7 +283,6 @@ const MarketDetailPage: React.FC = () => {
                         <HStack justify="space-between" w="full">
                           <VStack align="start" spacing={1}>
                             <Text fontWeight="bold">{product.name}</Text>
-                            <Text fontSize="sm" color="gray.600">{product.nameAr}</Text>
                           </VStack>
                           <Badge colorScheme="green" variant="subtle">
                             {product.category}

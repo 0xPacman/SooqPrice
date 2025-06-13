@@ -165,4 +165,27 @@ npm run dev  # Start development server
 
 ---
 
+## 🚚 **FUTURE PHASE: DELIVERY SERVICE INTEGRATION**
+
+### **Phase 6 Vision**
+After successful launch of the core price comparison platform, SooqPrice will evolve into a complete marketplace with integrated delivery services. This phase will transform the platform from price discovery to full e-commerce capability.
+
+### **Key Features Planned**
+- **Market-Based Delivery Network**: Delivery partners registered per market
+- **5% Platform Commission**: Revenue model from successful deliveries  
+- **Three-Sided Marketplace**: Customers, Markets, and Delivery Partners
+- **Real-Time Order Tracking**: GPS tracking and live updates
+- **Integrated Shopping Experience**: From price comparison to product ordering
+
+### **Business Impact**
+- Transform price listings into purchasable inventory
+- Create new revenue streams through delivery commissions
+- Expand platform value proposition for all stakeholders
+- Leverage existing market relationships and user trust
+- Position for regional expansion and scaling
+
+**📋 Detailed Planning**: See `docs/DELIVERY_PHASE_BRAINSTORM.md` for comprehensive feature analysis, technical architecture, and implementation roadmap.
+
+---
+
 *SooqPrice mobile-optimized price submission system is production-ready! 🇲🇦*

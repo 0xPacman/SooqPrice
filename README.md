@@ -136,6 +136,18 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 - [ ] Production deployment
 - [ ] Testing and QA
 
+### Phase 6: Delivery Service Integration (Future Phase) 🚚
+*Post-launch expansion into complete marketplace ecosystem*
+- [ ] **Market-Based Delivery Network**: Delivery partners per market
+- [ ] **E-commerce Integration**: Transform price listings into purchasable products
+- [ ] **5% Commission Model**: Revenue from successful deliveries
+- [ ] **Real-Time Order Tracking**: GPS tracking and live delivery updates
+- [ ] **Three-Sided Marketplace**: Customers, Markets, and Delivery Partners
+- [ ] **Mobile Delivery App**: Dedicated app for delivery partners
+- [ ] **Payment Processing**: Integrated payment system with commission handling
+
+**🔗 Detailed Planning**: See `docs/DELIVERY_PHASE_BRAINSTORM.md` for comprehensive analysis
+
 ## 🎯 Latest Features (Recently Completed) ⭐
 
 ### ✅ **Mobile-Optimized Price Submission System** 

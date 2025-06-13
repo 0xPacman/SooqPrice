@@ -248,7 +248,7 @@ const HomePage: React.FC = () => {
                   </Box>
                   <VStack align="start" spacing={1} w="full">
                     <Text fontWeight="semibold">{product.name}</Text>
-                    <Text fontSize="sm" color="gray.600">{product.nameAr}</Text>
+                    <Text fontSize="sm" color="gray.600">{product.name}</Text>
                     {product.priceRange && (
                       <HStack>
                         <Text fontSize="lg" fontWeight="bold" color="green.500">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Container,
@@ -45,10 +45,10 @@ const PriceSubmissionPage: React.FC = () => {
             <Icon as={PriceTagIcon} w={12} h={12} color="green.500" />
           </Flex>
           <Heading size="xl" color="gray.800" mb={4}>
-            تقديم أسعار السوق
+            Submit Market Prices
           </Heading>
           <Text fontSize="lg" color="gray.600" maxW="md" mx="auto">
-            ساعد مجتمعك بمشاركة أسعار المنتجات الطازجة من الأسواق المحلية
+            Help your community by sharing fresh produce prices from local markets
           </Text>
         </Box>
 
@@ -56,15 +56,15 @@ const PriceSubmissionPage: React.FC = () => {
         <Alert status="info" borderRadius="md">
           <AlertIcon />
           <VStack align="start" spacing={1}>
-            <Text fontWeight="bold">نصائح لتقديم أسعار دقيقة:</Text>
+            <Text fontWeight="bold">Tips for accurate price submissions:</Text>
             <Text fontSize="sm">
-              • تأكد من الأسعار الحالية للمنتجات
+              • Verify current product prices
             </Text>
             <Text fontSize="sm">
-              • اختر جودة المنتج بدقة
+              • Choose product quality accurately
             </Text>
             <Text fontSize="sm">
-              • أضف ملاحظات مفيدة للمشترين
+              • Add useful notes for buyers
             </Text>
           </VStack>
         </Alert>
@@ -89,27 +89,27 @@ const PriceSubmissionPage: React.FC = () => {
             }}
             transition="all 0.2s"
           >
-            إضافة سعر جديد
+            Add New Price
           </Button>
         </Box>
 
         {/* Quick Stats */}
         <Box bg="white" p={6} borderRadius="xl" shadow="sm">
           <Heading size="md" mb={4} textAlign="center">
-            إحصائيات سريعة
+            Quick Statistics
           </Heading>
           <VStack spacing={3}>
             <Flex justify="space-between" w="full">
-              <Text color="gray.600">الأسعار المقدمة اليوم:</Text>
+              <Text color="gray.600">Prices submitted today:</Text>
               <Text fontWeight="bold" color="green.600">245</Text>
             </Flex>
             <Flex justify="space-between" w="full">
-              <Text color="gray.600">أكثر الأسواق نشاطاً:</Text>
-              <Text fontWeight="bold" color="blue.600">سوق الدار البيضاء المركزي</Text>
+              <Text color="gray.600">Most active market:</Text>
+              <Text fontWeight="bold" color="blue.600">Casablanca Central Market</Text>
             </Flex>
             <Flex justify="space-between" w="full">
-              <Text color="gray.600">المنتج الأكثر طلباً:</Text>
-              <Text fontWeight="bold" color="orange.600">طماطم</Text>
+              <Text color="gray.600">Most requested product:</Text>
+              <Text fontWeight="bold" color="orange.600">Tomatoes</Text>
             </Flex>
           </VStack>
         </Box>
@@ -122,7 +122,7 @@ const PriceSubmissionPage: React.FC = () => {
             w="full"
             onClick={() => navigate('/markets')}
           >
-            استعراض الأسواق
+            Browse Markets
           </Button>
           <Button
             variant="outline"
@@ -130,7 +130,7 @@ const PriceSubmissionPage: React.FC = () => {
             w="full"
             onClick={() => navigate('/')}
           >
-            العودة للرئيسية
+            Back to Home
           </Button>
         </VStack>
       </VStack>
@@ -139,8 +139,6 @@ const PriceSubmissionPage: React.FC = () => {
       <SwipeablePriceSubmissionDrawer
         isOpen={isOpen}
         onClose={onClose}
-        marketId="default-market"
-        marketName="السوق المحلي"
         onSuccess={handleSuccess}
       />
     </Container>

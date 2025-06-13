@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Flex,
@@ -26,11 +26,16 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { HamburgerIcon, SearchIcon, BellIcon } from '@chakra-ui/icons';
 import { useAuth } from '@/hooks/useAuth';
+import ComingSoonModal from '@/components/common/ComingSoonModal';
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [notificationModalOpen, setNotificationModalOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [rewardsModalOpen, setRewardsModalOpen] = useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -91,6 +96,7 @@ const Header: React.FC = () => {
             variant="ghost"
             color="gray.600"
             _hover={{ color: "green.500" }}
+            onClick={() => setSearchModalOpen(true)}
           />
           {user?.isAuthenticated && (
             <IconButton
@@ -99,6 +105,7 @@ const Header: React.FC = () => {
               variant="ghost"
               color="gray.600"
               _hover={{ color: "green.500" }}
+              onClick={() => setNotificationModalOpen(true)}
             />
           )}
         </HStack>
@@ -133,25 +140,32 @@ const Header: React.FC = () => {
               </MenuButton>
               <MenuList>
                 <MenuItem as={Link} to="/profile">
-                  Profile
+                  👤 Profile
                 </MenuItem>
                 <MenuItem as={Link} to="/profile?tab=submissions">
-                  My Submissions
+                  📊 My Submissions
                 </MenuItem>
-                <MenuItem as={Link} to="/profile?tab=rewards">
-                  Rewards
+                <MenuDivider />
+                <MenuItem onClick={() => setSettingsModalOpen(true)}>
+                  ⚙️ Profile Settings
+                </MenuItem>
+                <MenuItem onClick={() => setNotificationModalOpen(true)}>
+                  🔔 Notifications
+                </MenuItem>
+                <MenuItem onClick={() => setRewardsModalOpen(true)}>
+                  🏆 Rewards & Achievements
                 </MenuItem>
                 {user.profile?.isAdmin && (
                   <>
                     <MenuDivider />
                     <MenuItem as={Link} to="/admin">
-                      Admin Dashboard
+                      👑 Admin Dashboard
                     </MenuItem>
                   </>
                 )}
                 <MenuDivider />
                 <MenuItem onClick={handleLogout} color="red.500">
-                  Logout
+                  🚪 Logout
                 </MenuItem>
               </MenuList>
             </Menu>
@@ -227,16 +241,40 @@ const Header: React.FC = () => {
                   </Box>
                   
                   <Button as={Link} to="/markets" variant="ghost" onClick={onClose}>
-                    Markets
+                    🏪 Markets
                   </Button>
                   <Button as={Link} to="/profile" variant="ghost" onClick={onClose}>
-                    Profile
+                    👤 Profile
                   </Button>
                   <Button as={Link} to="/profile?tab=submissions" variant="ghost" onClick={onClose}>
-                    My Submissions
+                    📊 My Submissions
                   </Button>
-                  <Button as={Link} to="/profile?tab=rewards" variant="ghost" onClick={onClose}>
-                    Rewards
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => {
+                      setSettingsModalOpen(true);
+                      onClose();
+                    }}
+                  >
+                    ⚙️ Profile Settings
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => {
+                      setNotificationModalOpen(true);
+                      onClose();
+                    }}
+                  >
+                    🔔 Notifications
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => {
+                      setRewardsModalOpen(true);
+                      onClose();
+                    }}
+                  >
+                    🏆 Rewards & Achievements
                   </Button>
                   
                   {user.profile?.isAdmin && (
@@ -273,6 +311,67 @@ const Header: React.FC = () => {
           </DrawerBody>
         </DrawerContent>
       </Drawer>
+
+      {/* Coming Soon Modals */}
+      <ComingSoonModal
+        isOpen={notificationModalOpen}
+        onClose={() => setNotificationModalOpen(false)}
+        title="Notifications & Alerts"
+        description="Get instant notifications about price changes, market updates, and community activities."
+        icon="🔔"
+        expectedRelease="Phase 2"
+        features={[
+          "Price drop alerts for your favorite products",
+          "New market opening notifications",
+          "Weekly price comparison reports",
+          "Reward and badge achievement alerts"
+        ]}
+      />
+
+      <ComingSoonModal
+        isOpen={searchModalOpen}
+        onClose={() => setSearchModalOpen(false)}
+        title="Advanced Search"
+        description="Search for specific products, markets, and prices with advanced filtering options."
+        icon="🔍"
+        expectedRelease="Phase 2"
+        features={[
+          "Product-specific search and filtering",
+          "Market and location-based search",
+          "Price range and quality filters",
+          "Recent submissions and trends"
+        ]}
+      />
+
+      <ComingSoonModal
+        isOpen={rewardsModalOpen}
+        onClose={() => setRewardsModalOpen(false)}
+        title="Rewards & Leaderboard"
+        description="Earn points, climb the leaderboard, and get rewarded for your contributions to the community."
+        icon="🏆"
+        expectedRelease="Phase 3"
+        features={[
+          "Monthly leaderboard competitions",
+          "Reputation points and badges system",
+          "Exclusive rewards for top contributors",
+          "Achievement unlocks and milestones"
+        ]}
+      />
+
+      <ComingSoonModal
+        isOpen={settingsModalOpen}
+        onClose={() => setSettingsModalOpen(false)}
+        title="Profile Settings"
+        description="Customize your profile, manage account preferences, and control privacy settings."
+        icon="⚙️"
+        expectedRelease="Phase 2"
+        features={[
+          "Profile information management",
+          "Privacy and notification preferences",
+          "Account security settings",
+          "Language and region preferences"
+        ]}
+      />
     </Box>
   );
 };

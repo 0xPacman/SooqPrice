@@ -11,31 +11,46 @@ import ProfilePage from './pages/profile/ProfilePage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import ActivityPage from './pages/activity/ActivityPage';
+import NotificationsPage from './pages/notifications/NotificationsPage';
+import RewardsPage from './pages/rewards/RewardsPage';
+import AnalyticsPage from './pages/analytics/AnalyticsPage';
+import SettingsPage from './pages/settings/SettingsPage';
 import { AuthProvider } from './hooks/useAuth';
+import { LanguageProvider } from './hooks/useLanguage';
 
 function App() {
   return (
-    <AuthProvider>
-      <Box minH="100vh" bg="gray.50">
-        <Routes>
-          {/* Auth routes without layout */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          
-          {/* Main app routes with layout */}
-          <Route path="/" element={<Layout />}>
-            <Route index element={<HomePage />} />
-            <Route path="submit" element={<PriceSubmissionPage />} />
-            <Route path="cities/:cityId" element={<CityDetailPage />} />
-            <Route path="products/:productId" element={<ProductDetailPage />} />
-            <Route path="markets" element={<MarketsPage />} />
-            <Route path="markets/:marketId" element={<MarketDetailPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="admin/*" element={<AdminDashboard />} />
-          </Route>
-        </Routes>
-      </Box>
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <Box minH="100vh" bg="gray.50">
+          <Routes>
+            {/* Auth routes without layout */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            
+            {/* Main app routes with layout */}
+            <Route path="/" element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="submit" element={<PriceSubmissionPage />} />
+              <Route path="cities/:cityId" element={<CityDetailPage />} />
+              <Route path="products/:productId" element={<ProductDetailPage />} />
+              <Route path="markets" element={<MarketsPage />} />
+              <Route path="markets/:marketId" element={<MarketDetailPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="admin/*" element={<AdminDashboard />} />
+              
+              {/* Coming Soon Pages */}
+              <Route path="activity" element={<ActivityPage />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+              <Route path="rewards" element={<RewardsPage />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+            </Route>
+          </Routes>
+        </Box>
+      </AuthProvider>
+    </LanguageProvider>
   );
 }
 

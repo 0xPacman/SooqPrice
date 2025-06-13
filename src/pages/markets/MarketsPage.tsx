@@ -237,7 +237,7 @@ const MarketsPage: React.FC = () => {
                           {market.name}
                         </Text>
                         <Text fontSize="sm" color="gray.600" noOfLines={1}>
-                          {market.nameAr}
+                          {market.address}
                         </Text>
                       </VStack>
                       <Badge 

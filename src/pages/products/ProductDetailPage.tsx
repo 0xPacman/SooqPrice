@@ -154,8 +154,7 @@ const ProductDetailPage: React.FC = () => {
                 <ProductIcon boxSize={12} color="green.500" />
                 <VStack align="start" spacing={2}>
                   <Heading size="2xl">{product.name}</Heading>
-                  <Text fontSize="lg" color="gray.600">{product.nameAr}</Text>
-                  <Text fontSize="md" color="gray.500">{product.nameFr}</Text>
+                  <Text fontSize="lg" color="gray.600">Category: {product.category}</Text>
                   <Badge colorScheme="blue" fontSize="md">
                     {product.category}
                   </Badge>

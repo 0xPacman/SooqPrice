@@ -196,7 +196,7 @@ const CityDetailPage: React.FC = () => {
                 <CardBody>
                   <VStack align="start" spacing={2}>
                     <Text fontWeight="bold">{product?.name}</Text>
-                    <Text fontSize="sm" color="gray.600">{product?.nameAr}</Text>
+                    <Text fontSize="sm" color="gray.600">{product?.category}</Text>
                     <HStack justify="space-between" w="full">
                       <Text fontSize="lg" fontWeight="bold" color="green.500">
                         {averagePrice.toFixed(2)} DH
@@ -271,7 +271,7 @@ const CityDetailPage: React.FC = () => {
                       
                       <VStack align="start" spacing={1}>
                         <Text fontWeight="bold" fontSize="lg">{market.name}</Text>
-                        <Text fontSize="sm" color="gray.600">{market.nameAr}</Text>
+                        <Text fontSize="sm" color="gray.600">{market.address}</Text>
                         <Text fontSize="xs" color="gray.500">{market.address}</Text>
                       </VStack>
 
