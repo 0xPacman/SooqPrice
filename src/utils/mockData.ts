@@ -120,6 +120,7 @@ export const mockProducts: Product[] = [
     nameFr: 'Tomates',
     category: 'vegetables',
     unit: 'kg',
+    commonUnits: ['kg', 'piece'],
     imageUrl: '/images/products/tomatoes.jpg',
     isSeasonal: false,
     createdAt: new Date('2024-01-01'),
@@ -131,6 +132,7 @@ export const mockProducts: Product[] = [
     nameFr: 'Pommes de terre',
     category: 'vegetables',
     unit: 'kg',
+    commonUnits: ['kg', 'piece'],
     imageUrl: '/images/products/potatoes.jpg',
     isSeasonal: false,
     createdAt: new Date('2024-01-01'),
@@ -142,6 +144,7 @@ export const mockProducts: Product[] = [
     nameFr: 'Oranges',
     category: 'fruits',
     unit: 'kg',
+    commonUnits: ['kg', 'piece', 'bundle'],
     imageUrl: '/images/products/oranges.jpg',
     isSeasonal: true,
     seasonStart: 11,
@@ -155,6 +158,7 @@ export const mockProducts: Product[] = [
     nameFr: 'Bananes',
     category: 'fruits',
     unit: 'kg',
+    commonUnits: ['kg', 'bundle'],
     imageUrl: '/images/products/bananas.jpg',
     isSeasonal: false,
     createdAt: new Date('2024-01-01'),
@@ -166,6 +170,7 @@ export const mockProducts: Product[] = [
     nameFr: 'Oignons',
     category: 'vegetables',
     unit: 'kg',
+    commonUnits: ['kg', 'piece'],
     imageUrl: '/images/products/onions.jpg',
     isSeasonal: false,
     createdAt: new Date('2024-01-01'),
@@ -177,6 +182,7 @@ export const mockProducts: Product[] = [
     nameFr: 'Carottes',
     category: 'vegetables',
     unit: 'kg',
+    commonUnits: ['kg', 'bundle'],
     imageUrl: '/images/products/carrots.jpg',
     isSeasonal: false,
     createdAt: new Date('2024-01-01'),
@@ -211,8 +217,8 @@ export const mockBadges: Badge[] = [
 export const mockUsers: User[] = [
   {
     id: '1',
-    email: 'ahmed@example.com',
-    username: 'ahmed_casa',
+    email: 'ahmed4star@gmail.com',
+    username: 'ahmed4star',
     fullName: 'Ahmed El Morocci',
     avatarUrl: '/images/avatars/ahmed.jpg',
     phone: '+212612345678',
@@ -222,7 +228,7 @@ export const mockUsers: User[] = [
     totalSubmissions: 127,
     accurateSubmissions: 118,
     isVerified: true,
-    isAdmin: false,
+    isAdmin: true, // Made admin
     isBanned: false,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-06-01'),
@@ -363,8 +369,10 @@ export const getMockCityById = (id: string): City | undefined =>
 export const getMockMarketById = (id: string): Market | undefined => 
   mockMarkets.find(market => market.id === id);
 
-export const getMockProductById = (id: string): Product | undefined => 
-  mockProducts.find(product => product.id === id);
+// Get product by id
+export const getMockProductById = (productId: string): Product | undefined => {
+  return mockProducts.find(product => product.id === productId);
+};
 
 export const getMockUserById = (id: string): User | undefined => 
   mockUsers.find(user => user.id === id);
@@ -380,6 +388,15 @@ export const getMockSubmissionsByProduct = (productId: string): PriceSubmission[
 
 export const getMockSubmissionsByUser = (userId: string): PriceSubmission[] => 
   mockPriceSubmissions.filter(submission => submission.userId === userId);
+
+// Get submissions by city
+export const getMockSubmissionsByCity = (cityId: string): PriceSubmission[] => {
+  const cityMarkets = getMockMarketsByCity(cityId);
+  const marketIds = cityMarkets.map(m => m.id);
+  return mockPriceSubmissions.filter(submission => 
+    marketIds.includes(submission.marketId)
+  );
+};
 
 // Search function for products
 export const searchMockProducts = (query: string): Product[] => {

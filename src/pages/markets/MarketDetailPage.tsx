@@ -49,8 +49,11 @@ import {
   getMockCityById,
   getMockSubmissionsByMarket,
   mockProducts 
-} from '@/utils/mockData';
-import { useAuth } from '@/hooks/useAuth';
+} from '../../utils/mockData';
+import { useAuth } from '../../hooks/useAuth';
+import { Product, PriceSubmission } from '../../types';
+import { FloatingActionButton } from '../../components/ui/FloatingActionButton';
+import { ReportButton } from '../../components/ui/ReportButton';
 
 const MarketDetailPage: React.FC = () => {
   const { marketId } = useParams<{ marketId: string }>();
@@ -92,10 +95,10 @@ const MarketDetailPage: React.FC = () => {
     }
     acc[product.id].submissions.push(submission);
     return acc;
-  }, {} as Record<string, { product: any; submissions: any[] }>);
+  }, {} as Record<string, { product: Product; submissions: PriceSubmission[] }>);
 
   // Get latest price for each product
-  const latestPrices = Object.values(productPrices).map(({ product, submissions }) => {
+  const latestPrices = (Object.values(productPrices) as { product: Product; submissions: PriceSubmission[] }[]).map(({ product, submissions }) => {
     const latest = submissions.sort((a, b) => 
       b.submissionDate.getTime() - a.submissionDate.getTime()
     )[0];
@@ -121,7 +124,7 @@ const MarketDetailPage: React.FC = () => {
 
   const isMarketOpen = () => {
     const now = new Date();
-    const currentDay = now.toLocaleDateString('en-US', { weekday: 'monday' }).toLowerCase();
+    const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
     const currentTime = now.toTimeString().slice(0, 5);
     
     const daySchedule = market.openingHours[currentDay];
@@ -154,7 +157,8 @@ const MarketDetailPage: React.FC = () => {
   };
 
   return (
-    <Container maxW="container.xl">
+    <>
+      <Container maxW="container.xl">
       <VStack spacing={6} align="stretch">
         {/* Back Button */}
         <HStack>
@@ -181,13 +185,22 @@ const MarketDetailPage: React.FC = () => {
                 </VStack>
                 
                 <VStack align="end" spacing={2}>
-                  <Badge 
-                    colorScheme={isMarketOpen() ? 'green' : 'red'}
-                    fontSize="md"
-                    p={2}
-                  >
-                    {isMarketOpen() ? 'Open Now' : 'Closed'}
-                  </Badge>
+                  <HStack>
+                    <ReportButton
+                      reportType="market"
+                      targetId={market.id}
+                      targetName={market.name}
+                      variant="icon"
+                      size="sm"
+                    />
+                    <Badge 
+                      colorScheme={isMarketOpen() ? 'green' : 'red'}
+                      fontSize="md"
+                      p={2}
+                    >
+                      {isMarketOpen() ? 'Open Now' : 'Closed'}
+                    </Badge>
+                  </HStack>
                   <Badge 
                     colorScheme={
                       market.marketType === 'traditional' ? 'orange' :
@@ -217,7 +230,7 @@ const MarketDetailPage: React.FC = () => {
                     <Text fontWeight="medium">Today's Hours</Text>
                     <Text fontSize="sm" color="gray.600">
                       {(() => {
-                        const today = new Date().toLocaleDateString('en-US', { weekday: 'monday' }).toLowerCase();
+                        const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
                         const todayHours = market.openingHours[today];
                         return todayHours && !todayHours.isClosed 
                           ? `${todayHours.open} - ${todayHours.close}`
@@ -365,9 +378,18 @@ const MarketDetailPage: React.FC = () => {
                           </HStack>
 
                           <VStack align="end" spacing={1}>
-                            <Text fontSize="xl" fontWeight="bold" color="green.500">
-                              {submission.price} DH
-                            </Text>
+                            <HStack>
+                              <ReportButton
+                                reportType="price"
+                                targetId={submission.id}
+                                targetName={`${product?.name} price by ${submission.user?.username}`}
+                                variant="icon"
+                                size="xs"
+                              />
+                              <Text fontSize="xl" fontWeight="bold" color="green.500">
+                                {submission.price} DH
+                              </Text>
+                            </HStack>
                             <Badge 
                               colorScheme={
                                 submission.quality === 'excellent' ? 'green' :
@@ -408,8 +430,8 @@ const MarketDetailPage: React.FC = () => {
                         <Text fontWeight="medium" textTransform="capitalize">
                           {day}
                         </Text>
-                        <Text color={hours.isClosed ? 'red.500' : 'green.500'}>
-                          {hours.isClosed ? 'Closed' : `${hours.open} - ${hours.close}`}
+                        <Text color={(hours as any).isClosed ? 'red.500' : 'green.500'}>
+                          {(hours as any).isClosed ? 'Closed' : `${(hours as any).open} - ${(hours as any).close}`}
                         </Text>
                       </HStack>
                     ))}
@@ -421,6 +443,13 @@ const MarketDetailPage: React.FC = () => {
         </Tabs>
       </VStack>
     </Container>
+    
+    <FloatingActionButton
+      marketId={market.id}
+      marketName={market.name}
+      label="Submit Price"
+    />
+    </>
   );
 };
 

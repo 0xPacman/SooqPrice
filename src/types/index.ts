@@ -88,6 +88,7 @@ export interface Product {
   nameFr: string;
   category: ProductCategory;
   unit: ProductUnit;
+  commonUnits: ProductUnit[];
   imageUrl?: string;
   isSeasonal: boolean;
   seasonStart?: number;

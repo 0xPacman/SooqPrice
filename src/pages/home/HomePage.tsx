@@ -38,14 +38,14 @@ const UsersIcon = (props: any) => (
     />
   </Icon>
 );
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 import { 
   mockCities, 
   mockMarkets, 
   mockPriceSubmissions, 
   mockProducts,
   getMockLatestPrices 
-} from '@/utils/mockData';
+} from '../../utils/mockData';
 
 const HomePage: React.FC = () => {
   const { user } = useAuth();
@@ -225,7 +225,13 @@ const HomePage: React.FC = () => {
         
         <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
           {popularProducts.map((product) => (
-            <Card key={product.id} _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}>
+            <Card 
+              key={product.id} 
+              as={Link}
+              to={`/products/${product.id}`}
+              _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}
+              cursor="pointer"
+            >
               <CardBody>
                 <VStack align="start" spacing={3}>
                   <Box 
@@ -234,8 +240,8 @@ const HomePage: React.FC = () => {
                     bg="gray.100" 
                     borderRadius="md"
                     display="flex"
-                    align="center"
-                    justify="center"
+                    alignItems="center"
+                    justifyContent="center"
                     fontSize="3xl"
                   >
                     📦
@@ -281,7 +287,18 @@ const HomePage: React.FC = () => {
                 <VStack align="start" spacing={3}>
                   <HStack justify="space-between" w="full">
                     <VStack align="start" spacing={1}>
-                      <Text fontWeight="semibold">{submission.product?.name}</Text>
+                      <Button
+                        as={Link}
+                        to={`/products/${submission.product?.id}`}
+                        variant="link"
+                        size="sm"
+                        fontWeight="semibold"
+                        p={0}
+                        h="auto"
+                        minH="auto"
+                      >
+                        {submission.product?.name}
+                      </Button>
                       <Text fontSize="sm" color="gray.600">
                         {submission.market?.name}
                       </Text>
@@ -340,7 +357,7 @@ const HomePage: React.FC = () => {
               <Card 
                 key={city.id} 
                 as={Link}
-                to={`/markets?city=${city.id}`}
+                to={`/cities/${city.id}`}
                 _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}
                 cursor="pointer"
               >

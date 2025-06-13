@@ -24,8 +24,9 @@ import {
   mockMarkets, 
   getMockMarketsByCity,
   getMockSubmissionsByMarket 
-} from '@/utils/mockData';
-import { Market } from '@/types';
+} from '../../utils/mockData';
+import { Market } from '../../types';
+import { QuickPriceSubmissionButton } from '../../components/ui/QuickPriceSubmissionButton';
 
 // Custom icons
 const SearchIcon = (props: any) => (
@@ -114,7 +115,7 @@ const MarketsPage: React.FC = () => {
 
   const isMarketOpen = (market: Market) => {
     const now = new Date();
-    const currentDay = now.toLocaleDateString('en-US', { weekday: 'monday' }).toLowerCase();
+    const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
     const currentTime = now.toTimeString().slice(0, 5);
     
     const daySchedule = market.openingHours[currentDay];
@@ -124,7 +125,8 @@ const MarketsPage: React.FC = () => {
   };
 
   return (
-    <Container maxW="container.xl">
+    <>
+      <Container maxW="container.xl">
       <VStack spacing={6} align="stretch">
         {/* Header */}
         <Box>
@@ -305,7 +307,7 @@ const MarketsPage: React.FC = () => {
                       <TimeIcon boxSize={4} />
                       <Text>
                         {(() => {
-                          const today = new Date().toLocaleDateString('en-US', { weekday: 'monday' }).toLowerCase();
+                          const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
                           const todayHours = market.openingHours[today];
                           return todayHours && !todayHours.isClosed 
                             ? `${todayHours.open} - ${todayHours.close}`
@@ -333,6 +335,9 @@ const MarketsPage: React.FC = () => {
         )}
       </VStack>
     </Container>
+    
+    <QuickPriceSubmissionButton />
+    </>
   );
 };
 

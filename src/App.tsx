@@ -4,6 +4,9 @@ import Layout from './components/layout/Layout';
 import HomePage from './pages/home/HomePage';
 import MarketsPage from './pages/markets/MarketsPage';
 import MarketDetailPage from './pages/markets/MarketDetailPage';
+import CityDetailPage from './pages/cities/CityDetailPage';
+import ProductDetailPage from './pages/products/ProductDetailPage';
+import PriceSubmissionPage from './pages/submit/PriceSubmissionPage';
 import ProfilePage from './pages/profile/ProfilePage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
@@ -22,6 +25,9 @@ function App() {
           {/* Main app routes with layout */}
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
+            <Route path="submit" element={<PriceSubmissionPage />} />
+            <Route path="cities/:cityId" element={<CityDetailPage />} />
+            <Route path="products/:productId" element={<ProductDetailPage />} />
             <Route path="markets" element={<MarketsPage />} />
             <Route path="markets/:marketId" element={<MarketDetailPage />} />
             <Route path="profile" element={<ProfilePage />} />
