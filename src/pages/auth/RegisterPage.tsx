@@ -90,9 +90,18 @@ const RegisterPage: React.FC = () => {
         <VStack spacing={8}>
           {/* Logo */}
           <VStack spacing={2}>
-            <Heading size="xl" color="white" textAlign="center">
-              🛒 SooqPrice
-            </Heading>
+            <HStack spacing={3} justify="center">
+              <Box w="48px" h="48px">
+                <img 
+                  src="/logo.svg" 
+                  alt="SooqPrice Logo" 
+                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                />
+              </Box>
+              <Heading size="xl" color="white" textAlign="center">
+                SooqPrice
+              </Heading>
+            </HStack>
             <Text color="whiteAlpha.800" textAlign="center">
               Join our community of price trackers
             </Text>

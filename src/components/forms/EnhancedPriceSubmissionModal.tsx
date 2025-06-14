@@ -292,7 +292,7 @@ export const EnhancedPriceSubmissionModal: React.FC<EnhancedPriceSubmissionModal
             </FormControl>            <Divider />            {/* Product Images - Desktop File Upload */}
             <Box display={{ base: "none", md: "block" }}>
               <FormLabel mb={3}>
-                Product Photos
+                Product Photos (optional)
               </FormLabel>
               <Text fontSize="sm" color="gray.600" mb={4}>
                 Upload photos from your computer to help buyers make better decisions and increase trust.
@@ -310,7 +310,7 @@ export const EnhancedPriceSubmissionModal: React.FC<EnhancedPriceSubmissionModal
             {/* Product Images - Mobile Preview */}
             <Box display={{ base: "block", md: "none" }}>
               <FormLabel mb={3}>
-                Product Photos
+                Product Photos (optional)
               </FormLabel>
               
               <SimpleGrid columns={3} spacing={2}>

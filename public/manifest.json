@@ -1,0 +1,29 @@
+{
+  "name": "SooqPrice - Moroccan Market Price Tracker",
+  "short_name": "SooqPrice",
+  "description": "Monitor and compare fresh produce prices across Moroccan souks",
+  "theme_color": "#4A9B3B",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

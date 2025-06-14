@@ -136,16 +136,19 @@ const Header: React.FC = () => {
       >
         {/* Logo */}
         <Link to="/">
-          <HStack spacing={2}>
-            <Circle 
-              size="40px" 
-              bg="green.500" 
-              color="white"
+          <HStack spacing={3}>
+            <Box
+              w="40px"
+              h="40px"
               _hover={{ transform: 'scale(1.05)' }}
               transition="transform 0.2s ease"
             >
-              <Text fontSize="xl" fontWeight="bold">🛒</Text>
-            </Circle>
+              <img 
+                src="/logo.svg" 
+                alt="SooqPrice Logo" 
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              />
+            </Box>
             <Heading 
               size={{ base: "md", md: "lg" }} 
               color="green.500"
@@ -366,9 +369,18 @@ const Header: React.FC = () => {
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader>
-            <Heading size="md" color="green.500">
-              SooqPrice
-            </Heading>
+            <HStack spacing={3}>
+              <Box w="32px" h="32px">
+                <img 
+                  src="/logo.svg" 
+                  alt="SooqPrice Logo" 
+                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                />
+              </Box>
+              <Heading size="md" color="green.500">
+                SooqPrice
+              </Heading>
+            </HStack>
           </DrawerHeader>
           <DrawerBody>
             <VStack spacing={4} align="stretch">

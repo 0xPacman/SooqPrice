@@ -15,6 +15,7 @@ import {
   Flex,
   Avatar,
   Divider,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { SearchIcon, StarIcon } from '@chakra-ui/icons';
@@ -49,6 +50,10 @@ const UsersIcon = (props: any) => (
 
 const HomePage: React.FC = () => {
   const { user } = useAuth();
+
+  // Theme colors for consistent card styling
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
 
   // Get recent price submissions
   const recentSubmissions = mockPriceSubmissions
@@ -180,7 +185,18 @@ const HomePage: React.FC = () => {
 
       {/* Stats Section */}
       <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4} mb={8}>
-        <Card>
+        <Card
+          bg={bgColor}
+          borderColor={borderColor}
+          borderWidth="1px"
+          borderRadius="2xl"
+          transition="all 0.3s ease"
+          _hover={{
+            transform: 'translateY(-4px)',
+            shadow: 'xl',
+            borderColor: 'green.300',
+          }}
+        >
           <CardBody textAlign="center">
             <Text fontSize="2xl" fontWeight="bold" color="green.500">
               {mockCities.length}
@@ -188,7 +204,18 @@ const HomePage: React.FC = () => {
             <Text color="gray.600">Cities</Text>
           </CardBody>
         </Card>
-        <Card>
+        <Card
+          bg={bgColor}
+          borderColor={borderColor}
+          borderWidth="1px"
+          borderRadius="2xl"
+          transition="all 0.3s ease"
+          _hover={{
+            transform: 'translateY(-4px)',
+            shadow: 'xl',
+            borderColor: 'green.300',
+          }}
+        >
           <CardBody textAlign="center">
             <Text fontSize="2xl" fontWeight="bold" color="green.500">
               {mockMarkets.length}
@@ -196,7 +223,18 @@ const HomePage: React.FC = () => {
             <Text color="gray.600">Markets</Text>
           </CardBody>
         </Card>
-        <Card>
+        <Card
+          bg={bgColor}
+          borderColor={borderColor}
+          borderWidth="1px"
+          borderRadius="2xl"
+          transition="all 0.3s ease"
+          _hover={{
+            transform: 'translateY(-4px)',
+            shadow: 'xl',
+            borderColor: 'green.300',
+          }}
+        >
           <CardBody textAlign="center">
             <Text fontSize="2xl" fontWeight="bold" color="green.500">
               {mockProducts.length}
@@ -204,7 +242,18 @@ const HomePage: React.FC = () => {
             <Text color="gray.600">Products</Text>
           </CardBody>
         </Card>
-        <Card>
+        <Card
+          bg={bgColor}
+          borderColor={borderColor}
+          borderWidth="1px"
+          borderRadius="2xl"
+          transition="all 0.3s ease"
+          _hover={{
+            transform: 'translateY(-4px)',
+            shadow: 'xl',
+            borderColor: 'green.300',
+          }}
+        >
           <CardBody textAlign="center">
             <Text fontSize="2xl" fontWeight="bold" color="green.500">
               {mockPriceSubmissions.length}
@@ -263,7 +312,19 @@ const HomePage: React.FC = () => {
         
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
           {recentSubmissions.map((submission) => (
-            <Card key={submission.id}>
+            <Card 
+              key={submission.id}
+              bg={bgColor}
+              borderColor={borderColor}
+              borderWidth="1px"
+              borderRadius="2xl"
+              transition="all 0.3s ease"
+              _hover={{
+                transform: 'translateY(-4px)',
+                shadow: 'xl',
+                borderColor: 'green.300',
+              }}
+            >
               <CardBody>
                 <VStack align="start" spacing={3}>
                   <HStack justify="space-between" w="full">
@@ -339,7 +400,16 @@ const HomePage: React.FC = () => {
                 key={city.id} 
                 as={Link}
                 to={`/cities/${city.id}`}
-                _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}
+                bg={bgColor}
+                borderColor={borderColor}
+                borderWidth="1px"
+                borderRadius="2xl"
+                transition="all 0.3s ease"
+                _hover={{
+                  transform: 'translateY(-4px)',
+                  shadow: 'xl',
+                  borderColor: 'green.300',
+                }}
                 cursor="pointer"
               >
                 <CardBody textAlign="center">
