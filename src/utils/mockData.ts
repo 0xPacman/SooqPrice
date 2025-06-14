@@ -2633,7 +2633,31 @@ export const generateMockPriceHistory = (productId: string, days: number = 90): 
   if (!product) return [];
 
   const history: PriceHistoryPoint[] = [];
-  const relevantMarkets = mockMarkets.slice(0, 5); // Use first 5 markets for demo
+  
+  // Get top 3 most recent markets with price submissions for this product
+  // This simulates selecting only the most active markets to avoid chart clutter
+  const productSubmissions = getMockSubmissionsByProduct(productId);
+  const marketSubmissionMap = new Map<string, Date>();
+  
+  // Find the most recent submission date for each market
+  productSubmissions.forEach(submission => {
+    const existingDate = marketSubmissionMap.get(submission.marketId);
+    if (!existingDate || submission.submissionDate > existingDate) {
+      marketSubmissionMap.set(submission.marketId, submission.submissionDate);
+    }
+  });
+  
+  // Sort markets by most recent submission date and take top 3
+  const sortedMarkets = Array.from(marketSubmissionMap.entries())
+    .sort(([, dateA], [, dateB]) => dateB.getTime() - dateA.getTime())
+    .slice(0, 3)
+    .map(([marketId]) => getMockMarketById(marketId))
+    .filter(Boolean) as Market[];
+  
+  // If we don't have enough markets from submissions, add some default markets
+  const relevantMarkets = sortedMarkets.length >= 3 
+    ? sortedMarkets 
+    : [...sortedMarkets, ...mockMarkets.slice(0, 3 - sortedMarkets.length)];
   
   // Base price ranges for different product categories
   const basePriceRanges: Record<string, { min: number, max: number, volatility: number }> = {

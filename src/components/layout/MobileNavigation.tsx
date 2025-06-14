@@ -10,56 +10,15 @@ import {
 import { keyframes } from '@emotion/react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
-  Icon,
-  IconProps
-} from '@chakra-ui/react';
+  HiHome,
+  HiShoppingBag,
+  HiPlus,
+  HiUser
+} from 'react-icons/hi2';
+import { 
+  IoStorefront
+} from 'react-icons/io5';
 import ComingSoonModal from '@/components/common/ComingSoonModal';
-
-// Custom modern icons for mobile navigation
-const HomeIcon = (props: IconProps) => (
-  <Icon viewBox="0 0 24 24" {...props}>
-    <path
-      fill="currentColor"
-      d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"
-    />
-  </Icon>
-);
-
-const StoreIcon = (props: IconProps) => (
-  <Icon viewBox="0 0 24 24" {...props}>
-    <path
-      fill="currentColor"
-      d="M12 2l3.09 6.26L22 9l-5 4.87L18.18 21 12 17.77 5.82 21 7 13.87 2 9l6.91-.74L12 2z"
-    />
-  </Icon>
-);
-
-const PlusIcon = (props: IconProps) => (
-  <Icon viewBox="0 0 24 24" {...props}>
-    <path
-      fill="currentColor"
-      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
-    />
-  </Icon>
-);
-
-const PackageIcon = (props: IconProps) => (
-  <Icon viewBox="0 0 24 24" {...props}>
-    <path
-      fill="currentColor"
-      d="M12.89 3l-4.95 8.59L6.5 14l5.5 9.5L17.5 14l-1.44-2.41L12.89 3zm-1.44 6l1.44-2.5L14.33 9H9.67l1.44-2.5z"
-    />
-  </Icon>
-);
-
-const UserIcon = (props: IconProps) => (
-  <Icon viewBox="0 0 24 24" {...props}>
-    <path
-      fill="currentColor"
-      d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 7.5L12 9.5L9 7.5L3 7V9C3 13.97 6.59 18.15 11.31 18.91L12 19L12.69 18.91C17.41 18.15 21 13.97 21 9Z"
-    />
-  </Icon>
-);
 
 const MobileNavigation: React.FC = () => {
   const location = useLocation();
@@ -79,31 +38,31 @@ const MobileNavigation: React.FC = () => {
 
   const navItems = [
     {
-      icon: HomeIcon,
+      icon: HiHome,
       label: 'Home',
       path: '/',
       type: 'link' as const,
     },
     {
-      icon: StoreIcon,
+      icon: IoStorefront,
       label: 'Markets',
       path: '/markets',
       type: 'link' as const,
     },
     {
-      icon: PlusIcon,
+      icon: HiPlus,
       label: 'Submit',
       path: '/submit',
       type: 'fab' as const, // Floating Action Button
     },
     {
-      icon: PackageIcon,
+      icon: HiShoppingBag,
       label: 'Products',
       path: '/products',
       type: 'link' as const,
     },
     {
-      icon: UserIcon,
+      icon: HiUser,
       label: 'Profile',
       path: '/profile',
       type: 'link' as const,
@@ -139,7 +98,7 @@ const MobileNavigation: React.FC = () => {
         <HStack spacing={0} justify="space-around" py={3} px={2}>
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
-            const Icon = item.icon;
+            const IconComponent = item.icon;
             
             // Special styling for the floating action button (Submit)
             if (item.type === 'fab') {
@@ -165,7 +124,7 @@ const MobileNavigation: React.FC = () => {
                     animation={isActive ? `${pulse} 2s infinite` : undefined}
                   >
                     <VStack spacing={0}>
-                      <Icon boxSize={6} />
+                      <IconComponent size={24} />
                       <Text fontSize="9px" fontWeight="bold" mt="-1px">
                         {item.label}
                       </Text>
@@ -209,9 +168,9 @@ const MobileNavigation: React.FC = () => {
                   />
                 )}
                 
-                <Icon 
-                  boxSize={isActive ? 6 : 5} 
-                  transition="all 0.2s ease"
+                <IconComponent 
+                  size={isActive ? 24 : 20}
+                  style={{ transition: 'all 0.2s ease' }}
                 />
                 <Text 
                   fontSize="xs" 

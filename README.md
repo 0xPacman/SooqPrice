@@ -1,54 +1,109 @@
 # SooqPrice 🛒🇲🇦
 
-*Monitoring and comparing fresh-produce prices across Moroccan souks*
+*Real-time fresh produce price monitoring across Moroccan markets*
 
-## 🚀 **Current Status: Production Ready** ✅
+## 🚀 Quick Start
 
-**Latest Update**: June 14, 2025 - Critical fixes completed, application fully functional
+```bash
+# Clone the repository
+git clone <repository-url>
+cd SooqPrice
 
-### **Recent Achievements**
-- ✅ **Fixed Critical Compilation Errors**: Application now builds and runs successfully
-- ✅ **Enhanced Desktop Navigation**: Modern header with functional search and navigation
-- ✅ **Improved Mobile Layout**: Product cards properly sized and centered on all screens
-- ✅ **Production-Ready State**: All core features working across desktop and mobile
+# Install dependencies
+npm install
 
-## Overview
+# Start development server
+npm run dev
 
-SooqPrice is a mobile-friendly web application that enables users to monitor and compare fresh produce prices across different souks (markets) in Morocco. The platform leverages community-driven price submissions to provide real-time market insights.
+# Build for production
+npm run build
+```
 
-## 🌟 Features
+## 🌟 What is SooqPrice?
 
-### ✅ **Completed Core Features**
-- **Browse Souks by City**: Explore markets organized by Moroccan cities
-- **Real-time Price Updates**: View community-submitted price information
-- **Mobile-Optimized Price Submission**: 4-step guided form with touch-friendly interface
-- **Enhanced Desktop Navigation**: Modern header with Markets, Products, and functional search
-- **Responsive Product Display**: Properly centered cards that adapt to screen size
-- **Multi-Platform Access**: Works seamlessly on mobile and desktop
-- **Price Comparison**: Compare prices across different markets
-- **Product & Location Search**: Find specific products and locations with working search
-- **User Profiles**: Badge and tagging system for trusted contributors
-- **Arabic RTL Support**: Proper right-to-left text display for Arabic content
-- **Accessibility Features**: Keyboard navigation and screen reader support
+SooqPrice is a community-driven platform that tracks fresh produce prices across Moroccan souks (markets). Users can submit, compare, and monitor real-time prices to make informed shopping decisions.
 
-### 🔮 **Upcoming Features**
-- **Browse Souks by City**: Explore markets organized by Moroccan cities
-- **Real-time Price Updates**: View community-submitted price information
-- **Mobile-Optimized Price Submission**: 4-step guided form with touch-friendly interface
-- **Multi-Platform Access**: Works seamlessly on mobile and desktop
-- **Price Comparison**: Compare prices across different markets
-- **Product & Location Search**: Find specific products and locations
-- **User Profiles**: Badge and tagging system for trusted contributors
-- **Arabic RTL Support**: Proper right-to-left text display for Arabic content
-- **Accessibility Features**: Keyboard navigation and screen reader support
+### ✅ Core Features
+- **🏪 Market Discovery**: Browse markets by city with detailed information
+- **📊 Price Tracking**: Real-time price submissions and comparisons
+- **📱 Mobile-First**: Optimized for mobile with touch-friendly interface
+- **🖼️ Photo Upload**: Visual price verification with image support
+- **🎯 Smart Search**: Find products and markets quickly
+- **👤 User Profiles**: Contributor recognition and trust system
+- **🌐 Multi-Language**: Arabic, French, and English support
+- **♿ Accessibility**: Full keyboard navigation and screen reader support
 
-### Gamification & Rewards
-- **Reward System**: Incentives for accurate price submissions
-- **Monthly Leaderboards**: Competition among top contributors
-- **User Badges**: Recognition system for reliable users
-- **Anti-fraud Detection**: System to detect fake accounts and submissions
+### 🔮 Upcoming Features
+- **📱 Progressive Web App**: Offline functionality and push notifications
+- **🔔 Price Alerts**: Notifications when prices change
+- **📈 Analytics Dashboard**: Market trends and insights
+- **🛡️ Fraud Detection**: Advanced verification system
+- **🎮 Gamification**: Rewards and leaderboards for contributors
 
-### Admin Dashboard
+## 📱 Mobile Experience
+
+SooqPrice is built mobile-first with:
+- **Bottom Sheet Navigation**: Intuitive mobile price submission
+- **Touch-Optimized**: 44px minimum touch targets
+- **Gesture Support**: Swipe interactions and smooth animations
+- **Responsive Design**: Adapts perfectly to all screen sizes
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React 18 + TypeScript + Vite
+- **UI Framework**: Chakra UI with custom theme
+- **Image Upload**: Cloudinary integration
+- **Authentication**: JWT-ready with role-based access
+- **Responsive**: Mobile-first design principles
+
+## 📚 Documentation
+
+- **[Implementation Guide](docs/IMPLEMENTATION_GUIDE.md)**: Technical details and architecture
+- **[API Documentation](docs/API_DOCUMENTATION.md)**: API endpoints and integration
+- **[Timeline](docs/TIMELINE.md)**: Development roadmap and milestones
+
+## 🌍 Localization
+
+The app supports multiple languages with RTL (Right-to-Left) support:
+- **العربية (Arabic)**: Native RTL layout
+- **Français (French)**: Secondary language
+- **English**: Development language
+
+## 🔧 Development
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Git
+
+### Environment Setup
+1. Copy `.env.example` to `.env.local`
+2. Add your Cloudinary credentials for image upload
+3. Configure any additional environment variables
+
+### Available Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run type-check` - TypeScript type checking
+
+## 🤝 Contributing
+
+We welcome contributions! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙋‍♂️ Support
+
+For questions or support, please open an issue on GitHub or contact the development team.
 - **User Management**: Monitor and manage user accounts
 - **Submission Oversight**: Review and validate price submissions
 - **Reward Distribution**: Manage monthly rewards and leaderboards

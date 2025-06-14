@@ -41,7 +41,6 @@ import {
   mockCities
 } from '../../utils/mockData';
 import { ReportButton } from '../../components/ui/ReportButton';
-import { QuickPriceSubmissionButton } from '../../components/ui/QuickPriceSubmissionButton';
 
 // Custom icons
 const ProductIcon = ({ category }: { category: string }) => {
@@ -83,8 +82,6 @@ const ProductIcon = ({ category }: { category: string }) => {
       display="flex"
       alignItems="center"
       justifyContent="center"
-      border="2px solid"
-      borderColor="green.200"
     >
       {getIcon()}
     </Box>
@@ -386,35 +383,10 @@ const ProductDetailPage: React.FC = () => {
         {/* Current Prices */}
         {latestPrices.length > 0 && (
           <VStack spacing={6} align="stretch">
-            {/* Price Summary Card */}
-            <Card bg={useColorModeValue('blue.50', 'blue.900')} borderRadius="xl">
-              <CardBody>
-                <HStack justify="space-between" align="center">
-                  <VStack align="start" spacing={1}>
-                    <Text fontSize="sm" fontWeight="medium" color={useColorModeValue('blue.700', 'blue.300')}>
-                      Price Range Today
-                    </Text>
-                    <Text fontSize="2xl" fontWeight="bold" color={useColorModeValue('blue.800', 'blue.200')}>
-                      {minPrice.toFixed(2)} - {maxPrice.toFixed(2)} DH
-                    </Text>
-                  </VStack>
-                  
-                  <VStack align="end" spacing={1}>
-                    <Text fontSize="sm" color={useColorModeValue('blue.600', 'blue.400')}>
-                      Best Deal
-                    </Text>
-                    <Text fontSize="lg" fontWeight="bold" color="green.500">
-                      {minPrice.toFixed(2)} DH
-                    </Text>
-                  </VStack>
-                </HStack>
-              </CardBody>
-            </Card>
-
             {/* Markets Table */}
             <Card borderRadius="xl" overflow="hidden">
               <CardBody p={0}>
-                <Box p={6} borderBottom="1px solid" borderColor={useColorModeValue('gray.200', 'gray.600')}>
+                <Box p={6}>
                   <Flex justify="space-between" align="center">
                     <Heading size="lg">Markets & Prices</Heading>
                     <Select value={sortBy} onChange={(e) => setSortBy(e.target.value as any)} w="200px">
@@ -541,9 +513,6 @@ const ProductDetailPage: React.FC = () => {
         )}
       </VStack>
     </Container>
-    
-    {/* Quick Price Submission Button */}
-    <QuickPriceSubmissionButton />
     </>
   );
 };

@@ -23,7 +23,6 @@ import {
   getMockSubmissionsByMarket 
 } from '../../utils/mockData';
 import { Market } from '../../types';
-import { QuickPriceSubmissionButton } from '../../components/ui/QuickPriceSubmissionButton';
 
 // Custom icons
 const SearchIcon = (props: any) => (
@@ -223,8 +222,6 @@ const MarketsPage: React.FC = () => {
         )}
       </VStack>
     </Container>
-    
-    <QuickPriceSubmissionButton />
     </>
   );
 };

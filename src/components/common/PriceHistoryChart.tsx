@@ -342,11 +342,10 @@ export const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
       <CardHeader pb={2}>
         <Flex justify="space-between" align="center" wrap="wrap" gap={4}>
           <HStack spacing={3}>
-            <TrendIcon trend={trend} />
-            <VStack align="start" spacing={0}>
+            <TrendIcon trend={trend} />            <VStack align="start" spacing={0}>
               <Heading size="lg">Price History</Heading>
               <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
-                {productName} price trends over time
+                {productName} - Top 3 active markets
               </Text>
             </VStack>
           </HStack>
@@ -376,9 +375,7 @@ export const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
             </Select>
           </HStack>
         </Flex>
-      </CardHeader>
-
-      <CardBody pt={0}>
+      </CardHeader>      <CardBody pt={0}>
         <VStack spacing={6} align="stretch">
           {/* Statistics Row */}
           <HStack spacing={6} justify="space-around" wrap="wrap">
@@ -433,9 +430,14 @@ export const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
 
           {/* Market Filter */}
           <Box>
-            <Text fontSize="sm" fontWeight="medium" mb={2} color={textColor}>
-              Markets ({selectedMarkets.length > 0 ? selectedMarkets.length : uniqueMarkets.length})
-            </Text>
+            <HStack justify="space-between" align="center" mb={2}>
+              <Text fontSize="sm" fontWeight="medium" color={textColor}>
+                Markets ({selectedMarkets.length > 0 ? selectedMarkets.length : uniqueMarkets.length})
+              </Text>
+              <Text fontSize="xs" color={useColorModeValue('gray.500', 'gray.500')} fontStyle="italic">
+                📊 Showing top 3 recent markets only
+              </Text>
+            </HStack>
             <HStack spacing={2} wrap="wrap">
               {uniqueMarkets.map((marketName, index) => (
                 <Button
@@ -457,6 +459,10 @@ export const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
                 </Button>
               ))}
             </HStack>
+            <Text fontSize="xs" color={useColorModeValue('gray.500', 'gray.500')} mt={2}>
+              💡 Only the 3 most recent markets with price submissions are shown to keep the chart readable. 
+              This helps focus on the most active and relevant market data.
+            </Text>
           </Box>
 
           {/* Chart */}

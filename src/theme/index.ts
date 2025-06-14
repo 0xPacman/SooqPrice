@@ -123,8 +123,6 @@ const components = {
         bg: 'white',
         borderRadius: 'xl',
         boxShadow: 'sm',
-        border: '1px solid',
-        borderColor: 'gray.200',
         _hover: {
           boxShadow: 'md',
           transform: 'translateY(-2px)',
@@ -237,6 +235,57 @@ const styles = {
     },
     '*, *::before, &::after': {
       borderColor: 'gray.200',
+    },
+    // Custom scrollbar styles
+    '::-webkit-scrollbar': {
+      width: '12px',
+      height: '12px',
+    },
+    '::-webkit-scrollbar-track': {
+      background: 'var(--chakra-colors-gray-100)',
+      borderRadius: '6px',
+    },
+    '::-webkit-scrollbar-thumb': {
+      background: 'linear-gradient(180deg, var(--chakra-colors-green-500), var(--chakra-colors-green-600))',
+      borderRadius: '6px',
+      border: '2px solid var(--chakra-colors-gray-100)',
+      boxShadow: '0 2px 4px rgba(74, 155, 59, 0.2)',
+    },
+    '::-webkit-scrollbar-thumb:hover': {
+      background: 'linear-gradient(180deg, var(--chakra-colors-green-600), var(--chakra-colors-green-700))',
+      boxShadow: '0 4px 8px rgba(74, 155, 59, 0.3)',
+    },
+    '::-webkit-scrollbar-thumb:active': {
+      background: 'var(--chakra-colors-green-700)',
+    },
+    '::-webkit-scrollbar-corner': {
+      background: 'var(--chakra-colors-gray-100)',
+    },
+    // Firefox scrollbar styles
+    'html': {
+      scrollbarWidth: 'thin',
+      scrollbarColor: 'var(--chakra-colors-green-500) var(--chakra-colors-gray-100)',
+    },
+    // Dark mode scrollbar adjustments
+    '.chakra-ui-dark': {
+      '::-webkit-scrollbar-track': {
+        background: 'var(--chakra-colors-gray-700)',
+      },
+      '::-webkit-scrollbar-thumb': {
+        background: 'linear-gradient(180deg, var(--chakra-colors-green-400), var(--chakra-colors-green-500))',
+        border: '2px solid var(--chakra-colors-gray-700)',
+        boxShadow: '0 2px 4px rgba(134, 239, 172, 0.2)',
+      },
+      '::-webkit-scrollbar-thumb:hover': {
+        background: 'linear-gradient(180deg, var(--chakra-colors-green-500), var(--chakra-colors-green-600))',
+        boxShadow: '0 4px 8px rgba(134, 239, 172, 0.3)',
+      },
+      '::-webkit-scrollbar-corner': {
+        background: 'var(--chakra-colors-gray-700)',
+      },
+      'html': {
+        scrollbarColor: 'var(--chakra-colors-green-400) var(--chakra-colors-gray-700)',
+      },
     },
   },
 };
