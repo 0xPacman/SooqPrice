@@ -6,6 +6,7 @@ import MarketsPage from './pages/markets/MarketsPage';
 import MarketDetailPage from './pages/markets/MarketDetailPage';
 import CityDetailPage from './pages/cities/CityDetailPage';
 import ProductDetailPage from './pages/products/ProductDetailPage';
+import ProductsPage from './pages/products/ProductsPage';
 import PriceSubmissionPage from './pages/submit/PriceSubmissionPage';
 import ProfilePage from './pages/profile/ProfilePage';
 import LoginPage from './pages/auth/LoginPage';
@@ -16,6 +17,7 @@ import NotificationsPage from './pages/notifications/NotificationsPage';
 import RewardsPage from './pages/rewards/RewardsPage';
 import AnalyticsPage from './pages/analytics/AnalyticsPage';
 import SettingsPage from './pages/settings/SettingsPage';
+import AccountSettingsPage from './pages/settings/AccountSettingsPage';
 import { AuthProvider } from './hooks/useAuth';
 import { LanguageProvider } from './hooks/useLanguage';
 
@@ -34,6 +36,7 @@ function App() {
               <Route index element={<HomePage />} />
               <Route path="submit" element={<PriceSubmissionPage />} />
               <Route path="cities/:cityId" element={<CityDetailPage />} />
+              <Route path="products" element={<ProductsPage />} />
               <Route path="products/:productId" element={<ProductDetailPage />} />
               <Route path="markets" element={<MarketsPage />} />
               <Route path="markets/:marketId" element={<MarketDetailPage />} />
@@ -46,6 +49,7 @@ function App() {
               <Route path="rewards" element={<RewardsPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="settings/account" element={<AccountSettingsPage />} />
             </Route>
           </Routes>
         </Box>

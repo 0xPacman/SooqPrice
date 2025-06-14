@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Box, Container } from '@chakra-ui/react';
 import Header from './Header';
 import MobileNavigation from './MobileNavigation';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 
 const Layout: React.FC = () => {
   const { user } = useAuth();

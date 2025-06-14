@@ -22,20 +22,34 @@ import {
   Text,
   Badge,
   HStack,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  useColorModeValue,
+  Circle,
 } from '@chakra-ui/react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { HamburgerIcon, SearchIcon, BellIcon } from '@chakra-ui/icons';
-import { useAuth } from '@/hooks/useAuth';
-import ComingSoonModal from '@/components/common/ComingSoonModal';
+import { useAuth } from '../../hooks/useAuth';
+import ComingSoonModal from '../common/ComingSoonModal';
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [rewardsModalOpen, setRewardsModalOpen] = useState(false);
-  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Theme colors
+  const headerBg = useColorModeValue('white', 'gray.800');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const searchBg = useColorModeValue('gray.50', 'gray.700');
+  const navButtonColor = useColorModeValue('gray.600', 'gray.300');
+  const navButtonHoverColor = useColorModeValue('green.500', 'green.400');
+  const navButtonActiveBg = useColorModeValue('green.50', 'green.900');
 
   const handleLogout = () => {
     logout();
@@ -46,6 +60,53 @@ const Header: React.FC = () => {
     navigate('/login');
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
+      setSearchTerm('');
+    }
+  };
+
+  // Custom navigation items with modern styling
+  const NavButton = ({ 
+    to, 
+    children, 
+    icon, 
+    isActive = false 
+  }: { 
+    to: string; 
+    children: React.ReactNode; 
+    icon?: React.ReactNode; 
+    isActive?: boolean;
+  }) => (
+    <Button
+      as={Link}
+      to={to}
+      variant="ghost"
+      color={isActive ? navButtonHoverColor : navButtonColor}
+      bg={isActive ? navButtonActiveBg : 'transparent'}
+      _hover={{ 
+        color: navButtonHoverColor, 
+        bg: navButtonActiveBg,
+        transform: 'translateY(-1px)'
+      }}
+      _active={{
+        transform: 'translateY(0)'
+      }}
+      transition="all 0.2s ease"
+      fontWeight="medium"
+      fontSize="sm"
+      leftIcon={icon}
+      borderRadius="lg"
+      px={4}
+      py={2}
+      h="auto"
+    >
+      {children}
+    </Button>
+  );
+
   return (
     <Box
       as="header"
@@ -54,10 +115,15 @@ const Header: React.FC = () => {
       left={0}
       right={0}
       zIndex={1000}
-      bg="white"
+      bg={headerBg}
       borderBottom="1px"
-      borderColor="gray.200"
+      borderColor={borderColor}
       boxShadow="sm"
+      backdropFilter="blur(10px)"
+      bgGradient={useColorModeValue(
+        'linear(to-r, white, gray.50)',
+        'linear(to-r, gray.800, gray.900)'
+      )}
     >
       <Flex
         maxW="container.xl"
@@ -70,135 +136,228 @@ const Header: React.FC = () => {
       >
         {/* Logo */}
         <Link to="/">
-          <Heading 
-            size={{ base: "md", md: "lg" }} 
-            color="green.500"
-            fontWeight="bold"
-          >
-            🛒 SooqPrice
-          </Heading>
+          <HStack spacing={2}>
+            <Circle 
+              size="40px" 
+              bg="green.500" 
+              color="white"
+              _hover={{ transform: 'scale(1.05)' }}
+              transition="transform 0.2s ease"
+            >
+              <Text fontSize="xl" fontWeight="bold">🛒</Text>
+            </Circle>
+            <Heading 
+              size={{ base: "md", md: "lg" }} 
+              color="green.500"
+              fontWeight="bold"
+              display={{ base: "none", sm: "block" }}
+            >
+              SooqPrice
+            </Heading>
+          </HStack>
         </Link>
 
         {/* Desktop Navigation */}
-        <HStack spacing={6} display={{ base: "none", md: "flex" }}>
-          <Button 
-            as={Link} 
+        <HStack spacing={8} display={{ base: "none", lg: "flex" }} flex={1} justify="center">
+          <NavButton 
             to="/markets" 
-            variant="ghost" 
-            color="gray.600"
-            _hover={{ color: "green.500" }}
+            icon={<Text fontSize="lg">🏪</Text>}
+            isActive={location.pathname === '/markets'}
           >
             Markets
-          </Button>
+          </NavButton>
+          
+          <NavButton 
+            to="/products" 
+            icon={<Text fontSize="lg">📦</Text>}
+            isActive={location.pathname === '/products'}
+          >
+            Products
+          </NavButton>
+
+          {/* Enhanced Search Bar */}
+          <Box minW="300px" maxW="400px">
+            <form onSubmit={handleSearch}>
+              <InputGroup size="md">
+                <InputLeftElement pointerEvents="none">
+                  <SearchIcon color="gray.400" />
+                </InputLeftElement>
+                <Input
+                  placeholder="Search products, markets..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  bg={searchBg}
+                  border="1px"
+                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderRadius="full"
+                  _hover={{ borderColor: 'green.300' }}
+                  _focus={{ 
+                    borderColor: 'green.500',
+                    boxShadow: '0 0 0 1px var(--chakra-colors-green-500)'
+                  }}
+                  fontSize="sm"
+                />
+              </InputGroup>
+            </form>
+          </Box>
+
+          {/* Notifications Button */}
+          {user?.isAuthenticated && (
+            <Box position="relative">
+              <IconButton
+                aria-label="Notifications"
+                icon={<BellIcon />}
+                variant="ghost"
+                color={navButtonColor}
+                bg="transparent"
+                _hover={{ 
+                  color: navButtonHoverColor, 
+                  bg: navButtonActiveBg,
+                  transform: 'translateY(-1px)'
+                }}
+                _active={{
+                  transform: 'translateY(0)'
+                }}
+                transition="all 0.2s ease"
+                onClick={() => setNotificationModalOpen(true)}
+                size="md"
+                borderRadius="lg"
+              />
+              {/* Notification Badge */}
+              <Circle
+                size="6px"
+                bg="red.500"
+                position="absolute"
+                top="8px"
+                right="8px"
+                border="2px solid"
+                borderColor={headerBg}
+              />
+            </Box>
+          )}
+        </HStack>
+
+        {/* Mobile Menu & User Menu */}
+        <HStack spacing={3}>
+          {/* Mobile Search Button */}
           <IconButton
             aria-label="Search"
             icon={<SearchIcon />}
             variant="ghost"
-            color="gray.600"
-            _hover={{ color: "green.500" }}
+            color={navButtonColor}
+            _hover={{ color: navButtonHoverColor }}
             onClick={() => setSearchModalOpen(true)}
+            display={{ base: "flex", lg: "none" }}
+            size="md"
+            borderRadius="lg"
           />
-          {user?.isAuthenticated && (
-            <IconButton
-              aria-label="Notifications"
-              icon={<BellIcon />}
-              variant="ghost"
-              color="gray.600"
-              _hover={{ color: "green.500" }}
-              onClick={() => setNotificationModalOpen(true)}
-            />
-          )}
-        </HStack>
 
-        {/* User Menu or Login Button */}
-        <Box>
-          {user?.isAuthenticated ? (
-            <Menu>
-              <MenuButton>
-                <HStack spacing={2}>
-                  <Avatar 
-                    size="sm" 
-                    name={user.profile?.fullName} 
-                    src={user.profile?.avatarUrl}
-                  />
-                  <Box display={{ base: "none", md: "block" }} textAlign="left">
-                    <Text fontSize="sm" fontWeight="medium">
-                      {user.profile?.fullName}
-                    </Text>
-                    <HStack spacing={1}>
-                      <Text fontSize="xs" color="gray.500">
-                        {user.profile?.reputationScore} pts
+          {/* Mobile Menu */}
+          <IconButton
+            aria-label="Menu"
+            icon={<HamburgerIcon />}
+            variant="ghost"
+            color={navButtonColor}
+            _hover={{ color: navButtonHoverColor }}
+            onClick={onOpen}
+            display={{ base: "flex", lg: "none" }}
+            size="md"
+            borderRadius="lg"
+          />
+
+          {/* User Menu or Login Button */}
+          <Box>
+            {user?.isAuthenticated ? (
+              <Menu>
+                <MenuButton>
+                  <HStack spacing={3}>
+                    <Avatar 
+                      size="sm" 
+                      name={user.profile?.fullName} 
+                      src={user.profile?.avatarUrl}
+                      border="2px solid"
+                      borderColor="green.100"
+                      _hover={{ borderColor: 'green.300' }}
+                      transition="border-color 0.2s ease"
+                    />
+                    <Box display={{ base: "none", md: "block" }} textAlign="left">
+                      <Text fontSize="sm" fontWeight="medium" color={useColorModeValue('gray.800', 'white')}>
+                        {user.profile?.fullName}
                       </Text>
-                      {user.profile?.isVerified && (
-                        <Badge size="xs" colorScheme="green">
-                          ✓
-                        </Badge>
-                      )}
-                    </HStack>
-                  </Box>
-                </HStack>
-              </MenuButton>
-              <MenuList>
-                <MenuItem as={Link} to="/profile">
-                  👤 Profile
-                </MenuItem>
-                <MenuItem as={Link} to="/profile?tab=submissions">
-                  📊 My Submissions
-                </MenuItem>
-                <MenuDivider />
-                <MenuItem onClick={() => setSettingsModalOpen(true)}>
-                  ⚙️ Profile Settings
-                </MenuItem>
-                <MenuItem onClick={() => setNotificationModalOpen(true)}>
-                  🔔 Notifications
-                </MenuItem>
-                <MenuItem onClick={() => setRewardsModalOpen(true)}>
-                  🏆 Rewards & Achievements
-                </MenuItem>
-                {user.profile?.isAdmin && (
-                  <>
-                    <MenuDivider />
-                    <MenuItem as={Link} to="/admin">
-                      👑 Admin Dashboard
-                    </MenuItem>
-                  </>
-                )}
-                <MenuDivider />
-                <MenuItem onClick={handleLogout} color="red.500">
-                  🚪 Logout
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          ) : (
-            <HStack spacing={2}>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={handleLogin}
-                display={{ base: "none", md: "inline-flex" }}
-              >
-                Login
-              </Button>
-              <Button 
-                variant="solid" 
-                size="sm"
-                as={Link}
-                to="/register"
-              >
-                Join Now
-              </Button>
-            </HStack>
-          )}
-        </Box>
-
-        {/* Mobile Menu Button */}
-        <IconButton
-          aria-label="Open menu"
-          icon={<HamburgerIcon />}
-          variant="ghost"
-          display={{ base: "flex", md: "none" }}
-          onClick={onOpen}
-        />
+                      <HStack spacing={1}>
+                        <Text fontSize="xs" color="gray.500">
+                          {user.profile?.reputationScore} pts
+                        </Text>
+                        {user.profile?.isVerified && (
+                          <Badge size="xs" colorScheme="green" borderRadius="full">
+                            ✓
+                          </Badge>
+                        )}
+                      </HStack>
+                    </Box>
+                  </HStack>
+                </MenuButton>
+                <MenuList>
+                  <MenuItem as={Link} to="/profile">
+                    👤 Profile
+                  </MenuItem>
+                  <MenuItem as={Link} to="/profile?tab=submissions">
+                    📊 My Submissions
+                  </MenuItem>
+                  <MenuDivider />
+                  <MenuItem as={Link} to="/settings/account">
+                    ⚙️ Account Settings
+                  </MenuItem>
+                  <MenuItem onClick={() => setNotificationModalOpen(true)}>
+                    🔔 Notifications
+                  </MenuItem>
+                  <MenuItem onClick={() => setRewardsModalOpen(true)}>
+                    🏆 Rewards & Achievements
+                  </MenuItem>
+                  {user.profile?.isAdmin && (
+                    <>
+                      <MenuDivider />
+                      <MenuItem as={Link} to="/admin">
+                        👑 Admin Dashboard
+                      </MenuItem>
+                    </>
+                  )}
+                  <MenuDivider />
+                  <MenuItem onClick={handleLogout} color="red.500">
+                    🚪 Logout
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            ) : (
+              <HStack spacing={2}>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={handleLogin}
+                  display={{ base: "none", md: "inline-flex" }}
+                  color={navButtonColor}
+                  _hover={{ color: navButtonHoverColor }}
+                  borderRadius="lg"
+                >
+                  Login
+                </Button>
+                <Button 
+                  variant="solid" 
+                  size="sm"
+                  as={Link}
+                  to="/register"
+                  colorScheme="green"
+                  borderRadius="lg"
+                  _hover={{ transform: 'translateY(-1px)' }}
+                  _active={{ transform: 'translateY(0)' }}
+                  transition="all 0.2s ease"
+                >
+                  Join Now
+                </Button>
+              </HStack>
+            )}
+          </Box>
+        </HStack>
       </Flex>
 
       {/* Mobile Drawer */}
@@ -215,7 +374,7 @@ const Header: React.FC = () => {
             <VStack spacing={4} align="stretch">
               {user?.isAuthenticated ? (
                 <>
-                  <Box p={4} bg="gray.50" borderRadius="lg">
+                  <Box p={4} bg={useColorModeValue('gray.50', 'gray.700')} borderRadius="lg">
                     <HStack spacing={3}>
                       <Avatar 
                         size="md" 
@@ -240,70 +399,46 @@ const Header: React.FC = () => {
                     </HStack>
                   </Box>
                   
-                  <Button as={Link} to="/markets" variant="ghost" onClick={onClose}>
+                  <Button as={Link} to="/markets" variant="ghost" onClick={onClose} justifyContent="flex-start">
                     🏪 Markets
                   </Button>
-                  <Button as={Link} to="/profile" variant="ghost" onClick={onClose}>
+                  <Button as={Link} to="/products" variant="ghost" onClick={onClose} justifyContent="flex-start">
+                    📦 Products
+                  </Button>
+                  <Button as={Link} to="/profile" variant="ghost" onClick={onClose} justifyContent="flex-start">
                     👤 Profile
                   </Button>
-                  <Button as={Link} to="/profile?tab=submissions" variant="ghost" onClick={onClose}>
+                  <Button as={Link} to="/profile?tab=submissions" variant="ghost" onClick={onClose} justifyContent="flex-start">
                     📊 My Submissions
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => {
-                      setSettingsModalOpen(true);
-                      onClose();
-                    }}
-                  >
-                    ⚙️ Profile Settings
+                  <Button as={Link} to="/settings/account" variant="ghost" onClick={onClose} justifyContent="flex-start">
+                    ⚙️ Settings
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => {
-                      setNotificationModalOpen(true);
-                      onClose();
-                    }}
-                  >
+                  <Button onClick={() => { setNotificationModalOpen(true); onClose(); }} variant="ghost" justifyContent="flex-start">
                     🔔 Notifications
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => {
-                      setRewardsModalOpen(true);
-                      onClose();
-                    }}
-                  >
-                    🏆 Rewards & Achievements
-                  </Button>
-                  
                   {user.profile?.isAdmin && (
-                    <Button as={Link} to="/admin" variant="ghost" onClick={onClose}>
-                      Admin Dashboard
+                    <Button as={Link} to="/admin" variant="ghost" onClick={onClose} justifyContent="flex-start">
+                      👑 Admin
                     </Button>
                   )}
-                  
-                  <Button 
-                    variant="ghost" 
-                    color="red.500" 
-                    onClick={() => {
-                      handleLogout();
-                      onClose();
-                    }}
-                  >
-                    Logout
+                  <Button onClick={() => { handleLogout(); onClose(); }} variant="ghost" color="red.500" justifyContent="flex-start">
+                    🚪 Logout
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button as={Link} to="/markets" variant="ghost" onClick={onClose}>
-                    Markets
+                  <Button as={Link} to="/markets" variant="ghost" onClick={onClose} justifyContent="flex-start">
+                    🏪 Markets
                   </Button>
-                  <Button as={Link} to="/login" variant="ghost" onClick={onClose}>
-                    Login
+                  <Button as={Link} to="/products" variant="ghost" onClick={onClose} justifyContent="flex-start">
+                    📦 Products
                   </Button>
-                  <Button as={Link} to="/register" variant="solid" onClick={onClose}>
-                    Join Now
+                  <Button onClick={() => { handleLogin(); onClose(); }} variant="ghost" justifyContent="flex-start">
+                    🔑 Login
+                  </Button>
+                  <Button as={Link} to="/register" colorScheme="green" onClick={onClose}>
+                    ✨ Join Now
                   </Button>
                 </>
               )}
@@ -312,65 +447,28 @@ const Header: React.FC = () => {
         </DrawerContent>
       </Drawer>
 
-      {/* Coming Soon Modals */}
-      <ComingSoonModal
-        isOpen={notificationModalOpen}
-        onClose={() => setNotificationModalOpen(false)}
-        title="Notifications & Alerts"
-        description="Get instant notifications about price changes, market updates, and community activities."
-        icon="🔔"
-        expectedRelease="Phase 2"
-        features={[
-          "Price drop alerts for your favorite products",
-          "New market opening notifications",
-          "Weekly price comparison reports",
-          "Reward and badge achievement alerts"
-        ]}
-      />
-
-      <ComingSoonModal
-        isOpen={searchModalOpen}
-        onClose={() => setSearchModalOpen(false)}
+      {/* Search Modal */}
+      <ComingSoonModal 
+        isOpen={searchModalOpen} 
+        onClose={() => setSearchModalOpen(false)} 
         title="Advanced Search"
-        description="Search for specific products, markets, and prices with advanced filtering options."
-        icon="🔍"
-        expectedRelease="Phase 2"
-        features={[
-          "Product-specific search and filtering",
-          "Market and location-based search",
-          "Price range and quality filters",
-          "Recent submissions and trends"
-        ]}
+        message="Advanced search functionality is coming soon! For now, use the search bar in the header."
       />
 
-      <ComingSoonModal
-        isOpen={rewardsModalOpen}
-        onClose={() => setRewardsModalOpen(false)}
-        title="Rewards & Leaderboard"
-        description="Earn points, climb the leaderboard, and get rewarded for your contributions to the community."
-        icon="🏆"
-        expectedRelease="Phase 3"
-        features={[
-          "Monthly leaderboard competitions",
-          "Reputation points and badges system",
-          "Exclusive rewards for top contributors",
-          "Achievement unlocks and milestones"
-        ]}
+      {/* Notifications Modal */}
+      <ComingSoonModal 
+        isOpen={notificationModalOpen} 
+        onClose={() => setNotificationModalOpen(false)} 
+        title="Notifications"
+        message="Real-time notifications are coming soon! Stay tuned for updates on your price submissions and market activities."
       />
 
-      <ComingSoonModal
-        isOpen={settingsModalOpen}
-        onClose={() => setSettingsModalOpen(false)}
-        title="Profile Settings"
-        description="Customize your profile, manage account preferences, and control privacy settings."
-        icon="⚙️"
-        expectedRelease="Phase 2"
-        features={[
-          "Profile information management",
-          "Privacy and notification preferences",
-          "Account security settings",
-          "Language and region preferences"
-        ]}
+      {/* Rewards Modal */}
+      <ComingSoonModal 
+        isOpen={rewardsModalOpen} 
+        onClose={() => setRewardsModalOpen(false)} 
+        title="Rewards & Achievements"
+        message="The rewards system is coming soon! Earn points and unlock achievements by contributing accurate price data."
       />
     </Box>
   );

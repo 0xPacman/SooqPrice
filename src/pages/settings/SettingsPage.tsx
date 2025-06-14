@@ -25,11 +25,9 @@ import ComingSoonModal from '../../components/common/ComingSoonModal';
 
 const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { currentLanguage, t } = useLanguage();
-  const [notificationsModalOpen, setNotificationsModalOpen] = useState(false);
+  const { currentLanguage, t } = useLanguage();  const [notificationsModalOpen, setNotificationsModalOpen] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [themeModalOpen, setThemeModalOpen] = useState(false);
-  const [accountModalOpen, setAccountModalOpen] = useState(false);
 
   const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {    const selectedLanguage = event.target.value;
     if (selectedLanguage !== 'en') {
@@ -134,40 +132,37 @@ const SettingsPage: React.FC = () => {
                 <Badge colorScheme="yellow">Coming Soon</Badge>
               </VStack>
             </CardBody>
-          </Card>
-
-          <Card 
+          </Card>          <Card 
             cursor="pointer" 
             _hover={{ shadow: "md", transform: "translateY(-2px)" }}
             transition="all 0.2s"
-            onClick={() => setAccountModalOpen(true)}
+            onClick={() => navigate('/settings/account')}
           >
             <CardBody textAlign="center">
               <VStack spacing={3}>
                 <Box fontSize="2xl">👤</Box>
-                <Heading size="sm">Account</Heading>
+                <Heading size="sm">Account Settings</Heading>
                 <Text fontSize="sm" color="gray.600">
-                  Manage account security
+                  Manage profile, password & security
                 </Text>
-                <Badge colorScheme="yellow">Coming Soon</Badge>
+                <Badge colorScheme="green">Available</Badge>
               </VStack>
             </CardBody>
           </Card>
         </SimpleGrid>
 
-        <Divider />
-
-        {/* Current Features Note */}
+        <Divider />        {/* Current Features Note */}
         <Alert status="info">
           <AlertIcon />
           <Box>
-            <Text fontWeight="bold">Phase 1 - Basic Features</Text>
+            <Text fontWeight="bold">Available Now</Text>
             <Text fontSize="sm">
-              Most settings features are planned for Phase 2. Currently available: Language selection (English only)
+              Account Settings are available! Manage your profile, password, and security settings. 
+              Additional features like notifications, privacy controls, and themes are planned for Phase 2.
             </Text>
           </Box>
         </Alert>
-      </VStack>      {/* Coming Soon Modals */}
+      </VStack>{/* Coming Soon Modals */}
       <ComingSoonModal
         isOpen={notificationsModalOpen}
         onClose={() => setNotificationsModalOpen(false)}
@@ -184,23 +179,12 @@ const SettingsPage: React.FC = () => {
         description="Manage your data sharing preferences, export personal data, and control profile visibility"
         icon="🛡️"
         expectedRelease="Phase 2 - Coming Soon"
-      />
-
-      <ComingSoonModal
+      />      <ComingSoonModal
         isOpen={themeModalOpen}
         onClose={() => setThemeModalOpen(false)}
         title="Appearance & Theme"
         description="Customize the app's appearance with dark mode, font size preferences, and color themes"
         icon="🎨"
-        expectedRelease="Phase 2 - Coming Soon"
-      />
-
-      <ComingSoonModal
-        isOpen={accountModalOpen}
-        onClose={() => setAccountModalOpen(false)}
-        title="Account Security"
-        description="Change password, enable two-factor authentication, and manage connected accounts"
-        icon="🔐"
         expectedRelease="Phase 2 - Coming Soon"
       />
     </Container>

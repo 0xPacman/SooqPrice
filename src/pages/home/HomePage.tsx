@@ -6,7 +6,6 @@ import {
   Button,
   SimpleGrid,
   Card,
-  CardHeader,
   CardBody,
   Badge,
   HStack,
@@ -19,6 +18,15 @@ import {
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { SearchIcon, StarIcon } from '@chakra-ui/icons';
+import { useAuth } from '../../hooks/useAuth';
+import { ProductCard } from '../../components/common/ProductCard';
+import { 
+  mockCities, 
+  mockMarkets, 
+  mockPriceSubmissions, 
+  mockProducts,
+  getMockLatestPrices 
+} from '../../utils/mockData';
 
 // Custom icons
 const TrendingUpIcon = (props: any) => (
@@ -38,14 +46,6 @@ const UsersIcon = (props: any) => (
     />
   </Icon>
 );
-import { useAuth } from '../../hooks/useAuth';
-import { 
-  mockCities, 
-  mockMarkets, 
-  mockPriceSubmissions, 
-  mockProducts,
-  getMockLatestPrices 
-} from '../../utils/mockData';
 
 const HomePage: React.FC = () => {
   const { user } = useAuth();
@@ -218,56 +218,37 @@ const HomePage: React.FC = () => {
       <Box mb={8}>
         <Flex justify="space-between" align="center" mb={4}>
           <Heading size="lg">Popular Products</Heading>
-          <Button as={Link} to="/markets" variant="ghost" rightIcon={<SearchIcon />}>
+          <Button as={Link} to="/products" variant="ghost" rightIcon={<SearchIcon />}>
             View All
           </Button>
         </Flex>
         
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
-          {popularProducts.map((product) => (
-            <Card 
-              key={product.id} 
-              as={Link}
-              to={`/products/${product.id}`}
-              _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}
-              cursor="pointer"
-            >
-              <CardBody>
-                <VStack align="start" spacing={3}>
-                  <Box 
-                    w="full" 
-                    h="120px" 
-                    bg="gray.100" 
-                    borderRadius="md"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    fontSize="3xl"
-                  >
-                    📦
-                  </Box>
-                  <VStack align="start" spacing={1} w="full">
-                    <Text fontWeight="semibold">{product.name}</Text>
-                    <Text fontSize="sm" color="gray.600">{product.name}</Text>
-                    {product.priceRange && (
-                      <HStack>
-                        <Text fontSize="lg" fontWeight="bold" color="green.500">
-                          {product.priceRange.min === product.priceRange.max 
-                            ? `${product.priceRange.min} DH`
-                            : `${product.priceRange.min}-${product.priceRange.max} DH`
-                          }
-                        </Text>
-                        <Text fontSize="sm" color="gray.500">per {product.unit}</Text>
-                      </HStack>
-                    )}
-                    <Text fontSize="xs" color="gray.500">
-                      Available in {product.marketCount} markets
-                    </Text>
-                  </VStack>
-                </VStack>
-              </CardBody>
-            </Card>
-          ))}
+        <SimpleGrid 
+          columns={{ base: 1, md: 2, lg: 3, xl: 4 }} 
+          spacing={6}
+          w="full"
+          justifyItems="center"
+          placeItems="center"
+        >
+          {popularProducts.map((product) => {
+            // Get latest price for this product
+            const latestPrices = getMockLatestPrices(product.id);
+            const latestPrice = latestPrices.length > 0 ? {
+              price: latestPrices[0].price,
+              marketName: mockMarkets.find(m => m.id === latestPrices[0].marketId)?.name || 'Unknown',
+              daysAgo: Math.floor((Date.now() - latestPrices[0].submissionDate.getTime()) / (1000 * 60 * 60 * 24))
+            } : undefined;
+
+            return (
+              <ProductCard
+                key={product.id}
+                product={product}
+                latestPrice={latestPrice}
+                showImages={true}
+                compact={false}
+              />
+            );
+          })}
         </SimpleGrid>
       </Box>
 

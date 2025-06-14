@@ -10,7 +10,6 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input,
   Select,
   Textarea,
   VStack,
@@ -29,15 +28,12 @@ import {
   Avatar,
   Divider,
   useBreakpointValue,
-  Slide,
   ScaleFade,
   IconButton,
   Progress,
-  Portal,
-  useColorModeValue,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { ChevronDownIcon, CheckIcon } from '@chakra-ui/icons';
+import { CheckIcon } from '@chakra-ui/icons';
 import { mockProducts, mockMarkets, mockCities } from '../../utils/mockData';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -85,7 +81,6 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
   isOpen,
   onClose,
   marketId,
-  marketName,
   preselectedProductId,
   onSuccess
 }) => {
@@ -126,9 +121,6 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
 
   const stepIndex = FORM_STEPS.indexOf(currentStep);
   const progress = ((stepIndex + 1) / FORM_STEPS.length) * 100;
-
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
 
   const handleClose = () => {
     reset();
@@ -191,7 +183,6 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       console.log('Price submission:', {
-        marketId: selectedMarketId,
         userId: user.id,
         ...data,
         submissionDate: new Date(),
@@ -548,9 +539,9 @@ export const SwipeablePriceSubmissionDrawer: React.FC<SwipeablePriceSubmissionDr
 
               <Box p={4} bg="green.50" borderRadius="lg" borderLeft="4px solid" borderColor="green.500">
                 <HStack>
-                  <Avatar size="sm" name={user?.fullName} src={user?.avatarUrl} />
+                  <Avatar size="sm" name={user?.profile?.fullName} src={user?.profile?.avatarUrl} />
                   <VStack align="start" spacing={0} flex={1}>
-                    <Text fontSize="sm" fontWeight="medium">Submitting as {user?.username}</Text>
+                    <Text fontSize="sm" fontWeight="medium">Submitting as {user?.profile?.username}</Text>
                     <Text fontSize="xs" color="gray.600">+10 reputation points on approval</Text>
                   </VStack>
                 </HStack>

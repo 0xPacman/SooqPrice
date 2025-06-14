@@ -3,12 +3,9 @@ import {
   Box,
   Heading,
   SimpleGrid,
-  Card,
-  CardBody,
   Text,
   VStack,
   HStack,
-  Badge,
   Input,
   Select,
   Button,
@@ -18,11 +15,11 @@ import {
   Container,
   Icon,
 } from '@chakra-ui/react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { MarketCard } from '../../components/common/MarketCard';
 import { 
   mockCities, 
   mockMarkets, 
-  getMockMarketsByCity,
   getMockSubmissionsByMarket 
 } from '../../utils/mockData';
 import { Market } from '../../types';
@@ -34,25 +31,6 @@ const SearchIcon = (props: any) => (
     <path
       fill="currentColor"
       d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-    />
-  </Icon>
-);
-
-const TimeIcon = (props: any) => (
-  <Icon viewBox="0 0 24 24" {...props}>
-    <path
-      fill="currentColor"
-      d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
-    />
-    <path fill="currentColor" d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-  </Icon>
-);
-
-const LocationIcon = (props: any) => (
-  <Icon viewBox="0 0 24 24" {...props}>
-    <path
-      fill="currentColor"
-      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
     />
   </Icon>
 );
@@ -106,22 +84,17 @@ const MarketsPage: React.FC = () => {
       sub => sub.submissionDate.toDateString() === new Date().toDateString()
     );
     
+    // Calculate average price
+    const avgPrice = submissions.length > 0 
+      ? submissions.reduce((sum, sub) => sum + sub.price, 0) / submissions.length 
+      : 0;
+    
     return {
-      totalSubmissions: submissions.length,
-      todaySubmissions: todaySubmissions.length,
-      uniqueProducts: new Set(submissions.map(sub => sub.productId)).size,
+      totalProducts: new Set(submissions.map(sub => sub.productId)).size,
+      recentUpdates: todaySubmissions.length,
+      avgPrice: avgPrice,
+      topContributors: []
     };
-  };
-
-  const isMarketOpen = (market: Market) => {
-    const now = new Date();
-    const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-    const currentTime = now.toTimeString().slice(0, 5);
-    
-    const daySchedule = market.openingHours[currentDay];
-    if (!daySchedule || daySchedule.isClosed) return false;
-    
-    return currentTime >= daySchedule.open && currentTime <= daySchedule.close;
   };
 
   return (
@@ -209,115 +182,30 @@ const MarketsPage: React.FC = () => {
         </Box>
 
         {/* Markets Grid */}
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 4 }} spacing={8}>
           {filteredMarkets.map((market) => {
             const city = mockCities.find(c => c.id === market.cityId);
             const stats = getMarketStats(market);
-            const isOpen = isMarketOpen(market);
             
             return (
-              <Card 
+              <MarketCard
                 key={market.id}
-                as={Link}
-                to={`/markets/${market.id}`}
-                _hover={{ 
-                  transform: 'translateY(-4px)', 
-                  boxShadow: 'xl',
-                  transition: 'all 0.2s'
+                market={{
+                  id: market.id,
+                  name: market.name,
+                  address: market.address,
+                  marketType: market.marketType,
+                  isActive: market.isActive,
                 }}
-                cursor="pointer"
-                h="full"
-              >
-                <CardBody>
-                  <VStack align="start" spacing={4} h="full">
-                    {/* Header */}
-                    <HStack justify="space-between" w="full">
-                      <VStack align="start" spacing={1} flex={1}>
-                        <Text fontSize="xl" fontWeight="bold" noOfLines={1}>
-                          {market.name}
-                        </Text>
-                        <Text fontSize="sm" color="gray.600" noOfLines={1}>
-                          {market.address}
-                        </Text>
-                      </VStack>
-                      <Badge 
-                        colorScheme={isOpen ? 'green' : 'red'}
-                        variant="subtle"
-                      >
-                        {isOpen ? 'Open' : 'Closed'}
-                      </Badge>
-                    </HStack>
-
-                    {/* Location */}
-                    <HStack spacing={2} color="gray.600">
-                      <LocationIcon boxSize={4} />
-                      <VStack align="start" spacing={0} flex={1}>
-                        <Text fontSize="sm" fontWeight="medium">
-                          {city?.name}
-                        </Text>
-                        <Text fontSize="xs" noOfLines={2}>
-                          {market.address}
-                        </Text>
-                      </VStack>
-                    </HStack>
-
-                    {/* Market Type */}
-                    <HStack spacing={2}>
-                      <Badge 
-                        colorScheme={
-                          market.marketType === 'traditional' ? 'orange' :
-                          market.marketType === 'modern' ? 'blue' : 'purple'
-                        }
-                        textTransform="capitalize"
-                      >
-                        {market.marketType}
-                      </Badge>
-                    </HStack>
-
-                    {/* Stats */}
-                    <SimpleGrid columns={3} spacing={2} w="full" mt="auto">
-                      <VStack spacing={1}>
-                        <Text fontSize="lg" fontWeight="bold" color="green.500">
-                          {stats.uniqueProducts}
-                        </Text>
-                        <Text fontSize="xs" color="gray.600" textAlign="center">
-                          Products
-                        </Text>
-                      </VStack>
-                      <VStack spacing={1}>
-                        <Text fontSize="lg" fontWeight="bold" color="green.500">
-                          {stats.totalSubmissions}
-                        </Text>
-                        <Text fontSize="xs" color="gray.600" textAlign="center">
-                          Price Updates
-                        </Text>
-                      </VStack>
-                      <VStack spacing={1}>
-                        <Text fontSize="lg" fontWeight="bold" color="green.500">
-                          {stats.todaySubmissions}
-                        </Text>
-                        <Text fontSize="xs" color="gray.600" textAlign="center">
-                          Today
-                        </Text>
-                      </VStack>
-                    </SimpleGrid>
-
-                    {/* Opening Hours */}
-                    <HStack spacing={2} color="gray.500" fontSize="sm">
-                      <TimeIcon boxSize={4} />
-                      <Text>
-                        {(() => {
-                          const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-                          const todayHours = market.openingHours[today];
-                          return todayHours && !todayHours.isClosed 
-                            ? `${todayHours.open} - ${todayHours.close}`
-                            : 'Closed today';
-                        })()}
-                      </Text>
-                    </HStack>
-                  </VStack>
-                </CardBody>
-              </Card>
+                cityName={city?.name || 'Unknown City'}
+                stats={{
+                  totalProducts: stats.totalProducts,
+                  recentUpdates: stats.recentUpdates,
+                  avgPrice: stats.avgPrice,
+                  topContributors: stats.topContributors
+                }}
+                compact={false}
+              />
             );
           })}
         </SimpleGrid>

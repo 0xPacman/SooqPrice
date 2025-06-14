@@ -17,7 +17,6 @@ import {
   TabPanels,
   TabPanel,
   Button,
-  Flex,
   useColorModeValue,
   Progress,
   Circle,
@@ -26,9 +25,9 @@ import {
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import { useAuth } from '@/hooks/useAuth';
-import { getMockSubmissionsByUser } from '@/utils/mockData';
-import { Navigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+import { getMockSubmissionsByUser } from '../../utils/mockData';
+import { Link } from 'react-router-dom';
 import { EmailIcon } from '@chakra-ui/icons';
 
 // Custom icons
@@ -42,19 +41,88 @@ const TrophyIcon = (props: any) => (
 );
 
 const ProfilePage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, login } = useAuth();
 
-  // Theme colors
+  // Always call hooks at the top level in the same order
   const bgGradient = useColorModeValue(
     'linear(to-br, green.50, blue.50)',
     'linear(to-br, green.900, blue.900)'
   );
   const cardBg = useColorModeValue('white', 'gray.800');
   const avatarSize = useBreakpointValue({ base: 'xl', md: '2xl' });
-  const statColumns = useBreakpointValue({ base: 2, md: 4 });
+
+  // Demo login function for development
+  const handleDemoLogin = async () => {
+    const result = await login('ahmed4star@gmail.com', 'password');
+  };
 
   if (!user?.isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return (
+      <Box bgGradient={bgGradient} minH="100vh" py={8}>
+        <Container maxW="container.md">
+          <VStack spacing={8} align="center" py={16}>
+            <VStack spacing={4} textAlign="center">
+              <Text fontSize="6xl">👋</Text>
+              <Heading size="xl" color="green.600">
+                Welcome to Your Profile
+              </Heading>
+              <Text color="gray.600" fontSize="lg" maxW="400px">
+                Sign in to view your profile, track your submissions, and manage your account settings.
+              </Text>
+            </VStack>
+
+            <VStack spacing={4} w="full" maxW="300px">
+              <Button
+                as={Link}
+                to="/login"
+                colorScheme="green"
+                size="lg"
+                w="full"
+                leftIcon={<EmailIcon />}
+              >
+                Sign In
+              </Button>
+              
+              <Text color="gray.500" fontSize="sm">
+                or
+              </Text>
+              
+              <Button
+                onClick={handleDemoLogin}
+                variant="outline"
+                colorScheme="green"
+                size="md"
+                w="full"
+              >
+                Try Demo Profile
+              </Button>
+            </VStack>
+
+            <Card bg={cardBg} maxW="400px" w="full">
+              <CardBody>
+                <VStack spacing={3} textAlign="center">
+                  <Heading size="md" color="green.600">
+                    New to SooqPrice?
+                  </Heading>
+                  <Text fontSize="sm" color="gray.600">
+                    Join our community to track prices, share submissions, and help build Morocco's largest price database.
+                  </Text>
+                  <Button
+                    as={Link}
+                    to="/register"
+                    colorScheme="blue"
+                    variant="outline"
+                    size="md"
+                  >
+                    Create Account
+                  </Button>
+                </VStack>
+              </CardBody>
+            </Card>
+          </VStack>
+        </Container>
+      </Box>
+    );
   }
 
   const userSubmissions = getMockSubmissionsByUser(user.id);
@@ -66,6 +134,22 @@ const ProfilePage: React.FC = () => {
   const accuracyPercentage = profile.totalSubmissions > 0 
     ? Math.round((profile.accurateSubmissions / profile.totalSubmissions) * 100)
     : 0;
+
+  // Helper function to safely format dates
+  const formatBadgeDate = (earnedAt: any): string => {
+    try {
+      if (earnedAt instanceof Date) {
+        return earnedAt.toLocaleDateString();
+      }
+      if (typeof earnedAt === 'string' || typeof earnedAt === 'number') {
+        return new Date(earnedAt).toLocaleDateString();
+      }
+      return 'Date unknown';
+    } catch (error) {
+      console.warn('Error formatting badge date:', error);
+      return 'Date unknown';
+    }
+  };
 
   return (
     <Container maxW="container.xl">
@@ -85,7 +169,8 @@ const ProfilePage: React.FC = () => {
             position="relative"
           />
           <CardBody mt="-60px" position="relative">
-            <HStack spacing={6} align="start">
+            <VStack spacing={6} align="center">
+              {/* Avatar Section - Centered on mobile */}
               <Box position="relative">
                 <Avatar 
                   size={avatarSize}
@@ -109,87 +194,135 @@ const ProfilePage: React.FC = () => {
                 )}
               </Box>
               
-              <VStack align="start" spacing={4} flex={1} pt={4}>
-                <VStack align="start" spacing={2}>
-                  <HStack spacing={3} align="center">
-                    <Heading size="xl" color={useColorModeValue('gray.800', 'white')}>
+              {/* Profile Info - Responsive layout */}
+              <VStack align="center" spacing={4} w="full" textAlign={{ base: "center", md: "left" }}>
+                <VStack align="center" spacing={2}>
+                  <VStack spacing={2} align="center">
+                    <Heading 
+                      size={{ base: "lg", md: "xl" }} 
+                      color={useColorModeValue('gray.800', 'white')}
+                      textAlign="center"
+                    >
                       {profile.fullName}
                     </Heading>
                     <Badge 
                       colorScheme="green" 
                       variant="subtle" 
-                      fontSize="sm"
+                      fontSize={{ base: "xs", md: "sm" }}
                       px={3}
                       py={1}
                       borderRadius="full"
                     >
                       Level {level}
                     </Badge>
-                  </HStack>
+                  </VStack>
                   
-                  <Text color="gray.600" fontSize="lg" fontWeight="medium">
+                  <Text color="gray.600" fontSize={{ base: "md", md: "lg" }} fontWeight="medium">
                     @{profile.username}
                   </Text>
                   
-                  <HStack spacing={4} color="gray.500" fontSize="sm">
-                    <HStack spacing={1}>
+                  <VStack spacing={2} color="gray.500" fontSize={{ base: "xs", md: "sm" }}>
+                    <HStack spacing={1} justify="center">
                       <Icon as={EmailIcon} />
                       <Text>{profile.email}</Text>
                     </HStack>
                     {profile.city && (
-                      <HStack spacing={1}>
+                      <HStack spacing={1} justify="center">
                         <Text>📍</Text>
                         <Text>{profile.city}</Text>
                       </HStack>
                     )}
-                  </HStack>
+                  </VStack>
                 </VStack>
 
-                {/* Level Progress */}
-                <Box w="full" maxW="300px">
+                {/* Level Progress - Better mobile sizing */}
+                <Box w="full" maxW={{ base: "250px", md: "300px" }}>
                   <HStack justify="space-between" mb={2}>
-                    <Text fontSize="sm" color="gray.600" fontWeight="medium">
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="medium">
                       Progress to Level {level + 1}
                     </Text>
-                    <Text fontSize="sm" color="green.500" fontWeight="bold">
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="green.500" fontWeight="bold">
                       {progressToNextLevel}/100
                     </Text>
                   </HStack>
                   <Progress
                     value={progressToNextLevel}
                     colorScheme="green"
-                    size="md"
+                    size={{ base: "sm", md: "md" }}
                     borderRadius="full"
                     bg={useColorModeValue('gray.100', 'gray.700')}
                   />
                 </Box>
 
-                {/* Badges */}
-                <Wrap spacing={2} maxW="full">
+                {/* Badges - Responsive wrapping */}
+                <Wrap spacing={2} justify="center" maxW="full">
                   {profile.isAdmin && (
                     <WrapItem>
-                      <Badge colorScheme="purple" size="lg" borderRadius="full" px={3}>
+                      <Badge 
+                        colorScheme="purple" 
+                        size={{ base: "md", md: "lg" }} 
+                        borderRadius="full" 
+                        px={{ base: 2, md: 3 }}
+                        fontSize={{ base: "xs", md: "sm" }}
+                      >
                         👑 Admin
                       </Badge>
                     </WrapItem>
                   )}
                   {profile.badges.slice(0, 3).map((badge) => (
                     <WrapItem key={badge.id}>
-                      <Badge colorScheme="blue" size="lg" borderRadius="full" px={3}>
+                      <Badge 
+                        colorScheme="blue" 
+                        size={{ base: "md", md: "lg" }} 
+                        borderRadius="full" 
+                        px={{ base: 2, md: 3 }}
+                        fontSize={{ base: "xs", md: "sm" }}
+                      >
                         {badge.icon} {badge.name}
                       </Badge>
                     </WrapItem>
                   ))}
                   {profile.badges.length > 3 && (
                     <WrapItem>
-                      <Badge variant="outline" size="lg" borderRadius="full" px={3}>
+                      <Badge 
+                        variant="outline" 
+                        size={{ base: "md", md: "lg" }} 
+                        borderRadius="full" 
+                        px={{ base: 2, md: 3 }}
+                        fontSize={{ base: "xs", md: "sm" }}
+                      >
                         +{profile.badges.length - 3} more
                       </Badge>
                     </WrapItem>
                   )}
                 </Wrap>
+
+                {/* Quick Actions */}
+                <HStack spacing={3} mt={4}>
+                  <Button
+                    as={Link}
+                    to="/settings/account"
+                    colorScheme="blue"
+                    variant="outline"
+                    size="sm"
+                    leftIcon={<Text fontSize="sm">⚙️</Text>}
+                    borderRadius="full"
+                  >
+                    Account Settings
+                  </Button>
+                  <Button
+                    as={Link}
+                    to="/submit"
+                    colorScheme="green"
+                    size="sm"
+                    leftIcon={<Text fontSize="sm">➕</Text>}
+                    borderRadius="full"
+                  >
+                    Submit Price
+                  </Button>
+                </HStack>
               </VStack>
-            </HStack>
+            </VStack>
           </CardBody>
         </Card>
 
@@ -315,6 +448,12 @@ const ProfilePage: React.FC = () => {
                 borderRadius="xl xl 0 0"
                 borderBottom="1px solid"
                 borderColor={useColorModeValue('gray.200', 'gray.600')}
+                overflowX="auto"
+                css={{
+                  '&::-webkit-scrollbar': {
+                    display: 'none'
+                  }
+                }}
               >
                 <Tab 
                   _selected={{ 
@@ -323,8 +462,12 @@ const ProfilePage: React.FC = () => {
                     borderBottomColor: 'transparent'
                   }}
                   fontWeight="medium"
+                  fontSize={{ base: "sm", md: "md" }}
+                  px={{ base: 3, md: 4 }}
+                  whiteSpace="nowrap"
                 >
-                  📊 My Submissions
+                  <Text display={{ base: "none", sm: "inline" }}>📊 My Submissions</Text>
+                  <Text display={{ base: "inline", sm: "none" }}>📊 Submissions</Text>
                 </Tab>
                 <Tab 
                   _selected={{ 
@@ -333,18 +476,12 @@ const ProfilePage: React.FC = () => {
                     borderBottomColor: 'transparent'
                   }}
                   fontWeight="medium"
+                  fontSize={{ base: "sm", md: "md" }}
+                  px={{ base: 3, md: 4 }}
+                  whiteSpace="nowrap"
                 >
-                  🏆 Badges & Achievements
-                </Tab>
-                <Tab 
-                  _selected={{ 
-                    bg: cardBg,
-                    borderColor: useColorModeValue('gray.200', 'gray.600'),
-                    borderBottomColor: 'transparent'
-                  }}
-                  fontWeight="medium"
-                >
-                  ⚙️ Settings
+                  <Text display={{ base: "none", sm: "inline" }}>🏆 Badges & Achievements</Text>
+                  <Text display={{ base: "inline", sm: "none" }}>🏆 Badges</Text>
                 </Tab>
               </TabList>
 
@@ -371,35 +508,47 @@ const ProfilePage: React.FC = () => {
                             transition="all 0.2s"
                           >
                             <CardBody>
-                              <HStack justify="space-between" align="start">
-                                <VStack align="start" spacing={2} flex={1}>
-                                  <HStack spacing={3}>
-                                    <Text fontWeight="bold" fontSize="lg">
+                              <VStack spacing={3} align="stretch">
+                                {/* Top Section - Product and Status */}
+                                <HStack justify="space-between" align="start">
+                                  <VStack align="start" spacing={1} flex={1}>
+                                    <Text 
+                                      fontWeight="bold" 
+                                      fontSize={{ base: "md", md: "lg" }}
+                                      lineHeight="shorter"
+                                    >
                                       {submission.product?.name}
                                     </Text>
-                                    <Badge 
-                                      colorScheme={
-                                        submission.verificationStatus === 'verified' ? 'green' :
-                                        submission.verificationStatus === 'pending' ? 'yellow' : 'red'
-                                      }
-                                      borderRadius="full"
-                                    >
-                                      {submission.verificationStatus}
-                                    </Badge>
-                                  </HStack>
-                                  <Text fontSize="md" color="gray.600">
-                                    📍 {submission.market?.name}
-                                  </Text>
-                                  <Text fontSize="sm" color="gray.500">
+                                    <Text fontSize={{ base: "sm", md: "md" }} color="gray.600">
+                                      📍 {submission.market?.name}
+                                    </Text>
+                                  </VStack>
+                                  <Badge 
+                                    colorScheme={
+                                      submission.verificationStatus === 'verified' ? 'green' :
+                                      submission.verificationStatus === 'pending' ? 'yellow' : 'red'
+                                    }
+                                    borderRadius="full"
+                                    fontSize={{ base: "xs", md: "sm" }}
+                                  >
+                                    {submission.verificationStatus}
+                                  </Badge>
+                                </HStack>
+                                
+                                {/* Bottom Section - Price and Date */}
+                                <HStack justify="space-between" align="center">
+                                  <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500">
                                     📅 {submission.submissionDate.toLocaleDateString()}
                                   </Text>
-                                </VStack>
-                                <VStack align="end" spacing={2}>
-                                  <Text fontSize="2xl" fontWeight="bold" color="green.500">
+                                  <Text 
+                                    fontSize={{ base: "xl", md: "2xl" }} 
+                                    fontWeight="bold" 
+                                    color="green.500"
+                                  >
                                     {submission.price} DH
                                   </Text>
-                                </VStack>
-                              </HStack>
+                                </HStack>
+                              </VStack>
                             </CardBody>
                           </Card>
                         ))}
@@ -460,7 +609,7 @@ const ProfilePage: React.FC = () => {
                                   </Text>
                                   <HStack spacing={2}>
                                     <Badge colorScheme="green" variant="subtle" fontSize="xs">
-                                      ✨ Earned {badge.earnedAt.toLocaleDateString()}
+                                      ✨ Earned {formatBadgeDate(badge.earnedAt)}
                                     </Badge>
                                   </HStack>
                                 </VStack>
@@ -480,27 +629,6 @@ const ProfilePage: React.FC = () => {
                         </VStack>
                       </Box>
                     )}
-                  </VStack>
-                </TabPanel>
-
-                <TabPanel px={6} py={6}>
-                  <VStack spacing={6} align="stretch">
-                    <Heading size="md" color={useColorModeValue('gray.800', 'white')}>
-                      Account Settings
-                    </Heading>
-                    <Card variant="outline" borderRadius="xl">
-                      <CardBody textAlign="center" py={12}>
-                        <VStack spacing={4}>
-                          <Text fontSize="4xl">⚙️</Text>
-                          <Text color="gray.600" fontSize="lg">
-                            Profile settings and preferences will be available in a future update.
-                          </Text>
-                          <Badge colorScheme="orange" variant="subtle" fontSize="sm" px={4} py={2}>
-                            Coming Soon
-                          </Badge>
-                        </VStack>
-                      </CardBody>
-                    </Card>
                   </VStack>
                 </TabPanel>
               </TabPanels>

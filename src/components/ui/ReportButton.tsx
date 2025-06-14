@@ -4,13 +4,9 @@ import {
   Button,
   useDisclosure,
   Tooltip,
-  Menu,
-  MenuButton,
-  MenuList,
   MenuItem,
   Icon,
 } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
 import { ReportModal } from '../forms/ReportModal';
 
 // Custom icons
@@ -28,7 +24,7 @@ interface ReportButtonProps {
   targetId: string;
   targetName: string;
   variant?: 'icon' | 'button' | 'menu-item';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   colorScheme?: string;
 }
 

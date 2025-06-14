@@ -13,11 +13,6 @@ import {
   Button,
   IconButton,
   Flex,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  Divider,
   Icon,
   Alert,
   AlertIcon,
@@ -30,9 +25,12 @@ import {
   Th,
   Td,
   TableContainer,
+  Divider,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowBackIcon } from '@chakra-ui/icons';
+import { ArrowBackIcon, ViewIcon } from '@chakra-ui/icons';
+import { ImageCarousel } from '@/components/common/ImageCarousel';
 import { 
   getMockProductById,
   getMockSubmissionsByProduct,
@@ -41,16 +39,55 @@ import {
   mockCities
 } from '../../utils/mockData';
 import { ReportButton } from '../../components/ui/ReportButton';
+import { QuickPriceSubmissionButton } from '../../components/ui/QuickPriceSubmissionButton';
 
 // Custom icons
-const ProductIcon = (props: any) => (
-  <Icon viewBox="0 0 24 24" {...props}>
-    <path
-      fill="currentColor"
-      d="M7,4V2A1,1 0 0,1 8,1H16A1,1 0 0,1 17,2V4H20A1,1 0 0,1 21,5V7A1,1 0 0,1 20,8H19V19A3,3 0 0,1 16,22H8A3,3 0 0,1 5,19V8H4A1,1 0 0,1 3,7V5A1,1 0 0,1 4,4H7M9,3V4H15V3H9M7,8V19A1,1 0 0,0 8,20H16A1,1 0 0,0 17,19V8H7Z"
-    />
-  </Icon>
-);
+const ProductIcon = ({ category }: { category: string }) => {
+  const getIcon = () => {
+    switch (category.toLowerCase()) {
+      case 'vegetables':
+        return '🥕';
+      case 'fruits':
+        return '🍎';
+      case 'meat':
+        return '🥩';
+      case 'dairy':
+        return '🥛';
+      case 'grains':
+        return '🌾';
+      case 'spices':
+        return '🌶️';
+      case 'seafood':
+        return '🐟';
+      case 'herbs':
+        return '🌿';
+      case 'nuts':
+        return '🥜';
+      case 'oils':
+        return '🫒';
+      default:
+        return '🛒';
+    }
+  };
+
+  return (
+    <Box 
+      fontSize="4xl" 
+      role="img" 
+      aria-label={`${category} icon`}
+      bg="green.50"
+      borderRadius="full"
+      p={4}
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      border="2px solid"
+      borderColor="green.200"
+    >
+      {getIcon()}
+    </Box>
+  );
+};
 
 const TrendUpIcon = (props: any) => (
   <Icon viewBox="0 0 24 24" {...props}>
@@ -131,91 +168,200 @@ const ProductDetailPage: React.FC = () => {
     : 0;
 
   return (
-    <Container maxW="container.xl">
-      <VStack spacing={6} align="stretch">
-        {/* Header */}
-        <HStack>
-          <IconButton
-            as={Link}
-            to="/"
-            aria-label="Back to home"
-            icon={<ArrowBackIcon />}
-            variant="ghost"
-            size="lg"
-          />
-          <Text color="gray.600">Back to Home</Text>
-        </HStack>
+    <>
+      <Container maxW="container.xl" py={6}>
+        <VStack spacing={8} align="stretch">
+          {/* Enhanced Header */}
+          <Card bg={useColorModeValue('gray.50', 'gray.900')} borderRadius="xl">
+            <CardBody py={4}>
+              <HStack spacing={4}>
+                <IconButton
+                  as={Link}
+                  to="/"
+                  aria-label="Back to home"
+                  icon={<ArrowBackIcon />}
+                  variant="ghost"
+                  size="lg"
+                  borderRadius="full"
+                  bg={useColorModeValue('white', 'gray.700')}
+                  shadow="md"
+                  _hover={{ transform: 'translateX(-2px)', shadow: 'lg' }}
+                  transition="all 0.2s ease"
+                />
+                <VStack align="start" spacing={0}>
+                  <Text fontWeight="bold" color={useColorModeValue('gray.700', 'gray.300')}>
+                    Product Details
+                  </Text>
+                  <Text fontSize="sm" color={useColorModeValue('gray.500', 'gray.400')}>
+                    Back to Home
+                  </Text>
+                </VStack>
+                
+                <Box flex={1} />
+                
+                <Button
+                  as={Link}
+                  to="/submit"
+                  colorScheme="green"
+                  size="md"
+                  borderRadius="full"
+                  leftIcon={<Icon boxSize={4}>+</Icon>}
+                  _hover={{ transform: 'translateY(-2px)', shadow: 'lg' }}
+                  transition="all 0.2s ease"
+                >
+                  Submit Price
+                </Button>
+              </HStack>
+            </CardBody>
+          </Card>
 
         {/* Product Info */}
-        <Card>
-          <CardBody>
-            <HStack justify="space-between" align="start">
-              <HStack spacing={4}>
-                <ProductIcon boxSize={12} color="green.500" />
-                <VStack align="start" spacing={2}>
-                  <Heading size="2xl">{product.name}</Heading>
-                  <Text fontSize="lg" color="gray.600">Category: {product.category}</Text>
-                  <Badge colorScheme="blue" fontSize="md">
-                    {product.category}
-                  </Badge>
+        <Card shadow="xl" borderRadius="2xl" bg={useColorModeValue('white', 'gray.800')}>
+          <CardBody p={8}>
+            <VStack spacing={6} align="stretch">
+              {/* Header Section */}
+              <Flex 
+                direction={{ base: 'column', md: 'row' }} 
+                align={{ base: 'center', md: 'start' }} 
+                gap={6}
+              >
+                <ProductIcon category={product.category} />
+                
+                <VStack align={{ base: 'center', md: 'start' }} spacing={3} flex={1}>
+                  <Heading 
+                    size="2xl" 
+                    textAlign={{ base: 'center', md: 'left' }}
+                    bgGradient="linear(to-r, green.400, blue.500)"
+                    bgClip="text"
+                  >
+                    {product.name}
+                  </Heading>
+                  
+                  <HStack spacing={3} flexWrap="wrap" justify={{ base: 'center', md: 'start' }}>
+                    <Badge
+                      colorScheme="green"
+                      variant="solid"
+                      px={4}
+                      py={2}
+                      borderRadius="full"
+                      fontSize="sm"
+                      fontWeight="bold"
+                    >
+                      {product.category}
+                    </Badge>
+                    
+                    <Badge
+                      colorScheme="blue"
+                      variant="outline"
+                      px={3}
+                      py={1}
+                      borderRadius="full"
+                      fontSize="xs"
+                    >
+                      {product.commonUnits.length} unit types
+                    </Badge>
+                  </HStack>
+                  
+                  <Text 
+                    fontSize="lg" 
+                    color={useColorModeValue('gray.600', 'gray.300')}
+                    textAlign={{ base: 'center', md: 'left' }}
+                  >
+                    Available units: {product.commonUnits.join(', ')}
+                  </Text>
                 </VStack>
-              </HStack>
+                
+                <VStack align="end" spacing={3}>
+                  <ReportButton
+                    reportType="price"
+                    targetId={product.id}
+                    targetName={product.name}
+                    variant="button"
+                    size="md"
+                  />
+                  
+                  <HStack spacing={2} color={useColorModeValue('gray.500', 'gray.400')}>
+                    <Icon as={ViewIcon} />
+                    <Text fontSize="sm">
+                      Product Details
+                    </Text>
+                  </HStack>
+                </VStack>
+              </Flex>
               
-              <VStack align="end" spacing={2}>
-                <ReportButton
-                  reportType="price"
-                  targetId={product.id}
-                  targetName={product.name}
-                  variant="button"
-                  size="sm"
-                />
-                <Text fontSize="sm" color="gray.500">
-                  Common units: {product.commonUnits.join(', ')}
-                </Text>
-              </VStack>
-            </HStack>
+              <Divider />
+              
+              {/* Quick Info Grid */}
+              <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
+                <VStack spacing={1} textAlign="center">
+                  <Text fontSize="2xl" fontWeight="bold" color="green.500">
+                    {latestPrices.length}
+                  </Text>
+                  <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
+                    Markets
+                  </Text>
+                </VStack>
+                
+                <VStack spacing={1} textAlign="center">
+                  <Text fontSize="2xl" fontWeight="bold" color="blue.500">
+                    {avgPrice > 0 ? `${avgPrice.toFixed(2)} DH` : 'N/A'}
+                  </Text>
+                  <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
+                    Avg Price
+                  </Text>
+                </VStack>
+                
+                <VStack spacing={1} textAlign="center">
+                  <Text fontSize="2xl" fontWeight="bold" color="orange.500">
+                    {totalSubmissions}
+                  </Text>
+                  <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
+                    Price Updates
+                  </Text>
+                </VStack>
+                
+                <VStack spacing={1} textAlign="center">
+                  <HStack justify="center">
+                    {priceChange > 0 ? (
+                      <TrendUpIcon color="red.500" />
+                    ) : priceChange < 0 ? (
+                      <TrendDownIcon color="green.500" />
+                    ) : (
+                      <Text color="gray.500">—</Text>
+                    )}
+                    <Text 
+                      fontSize="lg" 
+                      fontWeight="bold" 
+                      color={priceChange > 0 ? 'red.500' : priceChange < 0 ? 'green.500' : 'gray.500'}
+                    >
+                      {priceChange !== 0 ? `${priceChange > 0 ? '+' : ''}${priceChange.toFixed(2)}` : '0.00'}
+                    </Text>
+                  </HStack>
+                  <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
+                    7-day trend
+                  </Text>
+                </VStack>
+              </SimpleGrid>
+            </VStack>
           </CardBody>
         </Card>
 
-        {/* Statistics */}
-        <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-          <Stat>
-            <StatLabel>Average Price</StatLabel>
-            <StatNumber color="green.500">{avgPrice.toFixed(2)} DH</StatNumber>
-            <StatHelpText>
-              <HStack>
-                {priceChange > 0 ? (
-                  <>
-                    <TrendUpIcon color="red.500" />
-                    <Text color="red.500">+{priceChange.toFixed(2)} DH</Text>
-                  </>
-                ) : priceChange < 0 ? (
-                  <>
-                    <TrendDownIcon color="green.500" />
-                    <Text color="green.500">{priceChange.toFixed(2)} DH</Text>
-                  </>
-                ) : (
-                  <Text color="gray.500">No change</Text>
-                )}
-              </HStack>
-            </StatHelpText>
-          </Stat>
-          <Stat>
-            <StatLabel>Price Range</StatLabel>
-            <StatNumber>{minPrice.toFixed(2)} - {maxPrice.toFixed(2)} DH</StatNumber>
-            <StatHelpText>Min to Max</StatHelpText>
-          </Stat>
-          <Stat>
-            <StatLabel>Markets Available</StatLabel>
-            <StatNumber>{latestPrices.length}</StatNumber>
-            <StatHelpText>Currently tracking</StatHelpText>
-          </Stat>
-          <Stat>
-            <StatLabel>Total Updates</StatLabel>
-            <StatNumber>{totalSubmissions}</StatNumber>
-            <StatHelpText>All time</StatHelpText>
-          </Stat>
-        </SimpleGrid>
+        {/* Product Images from Unsplash */}
+        <Card shadow="lg" borderRadius="2xl">
+          <CardBody p={0}>
+            <ImageCarousel
+              productName={product.name}
+              maxImages={1}
+              showAttribution={true}
+              showDownload={false}
+              aspectRatio={16/9}
+              autoPlay={false}
+              autoPlayInterval={5000}
+              showDots={false}
+              size="regular"
+            />
+          </CardBody>
+        </Card>
 
         {submissions.length === 0 && (
           <Alert status="info">
@@ -228,90 +374,166 @@ const ProductDetailPage: React.FC = () => {
 
         {/* Current Prices */}
         {latestPrices.length > 0 && (
-          <Box>
-            <Flex justify="space-between" align="center" mb={4}>
-              <Heading size="lg">Current Prices by Market</Heading>
-              <Select value={sortBy} onChange={(e) => setSortBy(e.target.value as any)} w="200px">
-                <option value="date">Sort by Date</option>
-                <option value="price">Sort by Price</option>
-                <option value="market">Sort by Market</option>
-              </Select>
-            </Flex>
+          <VStack spacing={6} align="stretch">
+            {/* Price Summary Card */}
+            <Card bg={useColorModeValue('blue.50', 'blue.900')} borderRadius="xl">
+              <CardBody>
+                <HStack justify="space-between" align="center">
+                  <VStack align="start" spacing={1}>
+                    <Text fontSize="sm" fontWeight="medium" color={useColorModeValue('blue.700', 'blue.300')}>
+                      Price Range Today
+                    </Text>
+                    <Text fontSize="2xl" fontWeight="bold" color={useColorModeValue('blue.800', 'blue.200')}>
+                      {minPrice.toFixed(2)} - {maxPrice.toFixed(2)} DH
+                    </Text>
+                  </VStack>
+                  
+                  <VStack align="end" spacing={1}>
+                    <Text fontSize="sm" color={useColorModeValue('blue.600', 'blue.400')}>
+                      Best Deal
+                    </Text>
+                    <Text fontSize="lg" fontWeight="bold" color="green.500">
+                      {minPrice.toFixed(2)} DH
+                    </Text>
+                  </VStack>
+                </HStack>
+              </CardBody>
+            </Card>
 
-            <TableContainer>
-              <Table variant="simple">
-                <Thead>
-                  <Tr>
-                    <Th>Market</Th>
-                    <Th>Location</Th>
-                    <Th isNumeric>Price</Th>
-                    <Th>Quality</Th>
-                    <Th>Updated</Th>
-                    <Th>Actions</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {sortedPrices.map((submission) => {
-                    const market = mockMarkets.find(m => m.id === submission.marketId);
-                    const city = market ? mockCities.find(c => c.id === market.cityId) : null;
-                    const daysSinceUpdate = Math.floor((Date.now() - submission.submissionDate.getTime()) / (1000 * 60 * 60 * 24));
-                    
-                    return (
-                      <Tr key={submission.id}>
-                        <Td>
-                          <Button
-                            as={Link}
-                            to={`/markets/${market?.id}`}
-                            variant="link"
-                            size="sm"
-                            fontWeight="bold"
-                          >
-                            {market?.name}
-                          </Button>
-                        </Td>
-                        <Td>{city?.name}</Td>
-                        <Td isNumeric>
-                          <Text fontWeight="bold" color="green.500">
-                            {submission.price.toFixed(2)} DH
-                          </Text>
-                        </Td>
-                        <Td>
-                          <Badge
-                            colorScheme={
-                              submission.quality === 'excellent' ? 'green' :
-                              submission.quality === 'good' ? 'blue' :
-                              submission.quality === 'average' ? 'yellow' : 'red'
-                            }
-                          >
-                            {submission.quality}
-                          </Badge>
-                        </Td>
-                        <Td>
-                          <Text fontSize="sm" color={daysSinceUpdate > 7 ? 'red.500' : 'gray.600'}>
-                            {daysSinceUpdate === 0 ? 'Today' : 
-                             daysSinceUpdate === 1 ? 'Yesterday' : 
-                             `${daysSinceUpdate} days ago`}
-                          </Text>
-                        </Td>
-                        <Td>
-                          <ReportButton
-                            reportType="price"
-                            targetId={submission.id}
-                            targetName={`${product.name} price at ${market?.name}`}
-                            variant="icon"
-                            size="sm"
-                          />
-                        </Td>
+            {/* Markets Table */}
+            <Card borderRadius="xl" overflow="hidden">
+              <CardBody p={0}>
+                <Box p={6} borderBottom="1px solid" borderColor={useColorModeValue('gray.200', 'gray.600')}>
+                  <Flex justify="space-between" align="center">
+                    <Heading size="lg">Markets & Prices</Heading>
+                    <Select value={sortBy} onChange={(e) => setSortBy(e.target.value as any)} w="200px">
+                      <option value="date">Sort by Date</option>
+                      <option value="price">Sort by Price</option>
+                      <option value="market">Sort by Market</option>
+                    </Select>
+                  </Flex>
+                </Box>
+
+                <TableContainer>
+                  <Table variant="simple">
+                    <Thead bg={useColorModeValue('gray.50', 'gray.700')}>
+                      <Tr>
+                        <Th fontWeight="bold">Market</Th>
+                        <Th fontWeight="bold">Location</Th>
+                        <Th isNumeric fontWeight="bold">Price</Th>
+                        <Th fontWeight="bold">Quality</Th>
+                        <Th fontWeight="bold">Updated</Th>
+                        <Th fontWeight="bold">Actions</Th>
                       </Tr>
-                    );
-                  })}
-                </Tbody>
-              </Table>
-            </TableContainer>
-          </Box>
+                    </Thead>
+                    <Tbody>
+                      {sortedPrices.map((submission) => {
+                        const market = mockMarkets.find(m => m.id === submission.marketId);
+                        const city = market ? mockCities.find(c => c.id === market.cityId) : null;
+                        const daysSinceUpdate = Math.floor((Date.now() - submission.submissionDate.getTime()) / (1000 * 60 * 60 * 24));
+                        const isLowestPrice = submission.price === minPrice;
+                        
+                        return (
+                          <Tr 
+                            key={submission.id}
+                            bg={isLowestPrice ? useColorModeValue('green.50', 'green.900') : 'transparent'}
+                            _hover={{ bg: useColorModeValue('gray.50', 'gray.700') }}
+                            transition="background 0.2s ease"
+                          >
+                            <Td>
+                              <VStack align="start" spacing={1}>
+                                <Button
+                                  as={Link}
+                                  to={`/markets/${market?.id}`}
+                                  variant="link"
+                                  size="sm"
+                                  fontWeight="bold"
+                                  color={useColorModeValue('blue.600', 'blue.400')}
+                                >
+                                  {market?.name}
+                                </Button>
+                                {isLowestPrice && (
+                                  <Badge colorScheme="green" size="sm" variant="solid">
+                                    Best Price 🏆
+                                  </Badge>
+                                )}
+                              </VStack>
+                            </Td>
+                            <Td>
+                              <Text color={useColorModeValue('gray.600', 'gray.400')}>
+                                {city?.name}
+                              </Text>
+                            </Td>
+                            <Td isNumeric>
+                              <VStack align="end" spacing={0}>
+                                <Text 
+                                  fontWeight="bold" 
+                                  fontSize="lg"
+                                  color={isLowestPrice ? 'green.500' : useColorModeValue('gray.800', 'gray.200')}
+                                >
+                                  {submission.price.toFixed(2)} DH
+                                </Text>
+                                <Text fontSize="xs" color={useColorModeValue('gray.500', 'gray.400')}>
+                                  per {submission.unit || 'kg'}
+                                </Text>
+                              </VStack>
+                            </Td>
+                            <Td>
+                              <Badge
+                                colorScheme={
+                                  submission.quality === 'excellent' ? 'green' :
+                                  submission.quality === 'good' ? 'blue' :
+                                  submission.quality === 'average' ? 'yellow' : 'red'
+                                }
+                                variant="solid"
+                                borderRadius="full"
+                              >
+                                {submission.quality}
+                              </Badge>
+                            </Td>
+                            <Td>
+                              <VStack align="start" spacing={0}>
+                                <Text 
+                                  fontSize="sm" 
+                                  fontWeight="medium"
+                                  color={daysSinceUpdate > 7 ? 'red.500' : useColorModeValue('gray.700', 'gray.300')}
+                                >
+                                  {daysSinceUpdate === 0 ? 'Today' : 
+                                   daysSinceUpdate === 1 ? 'Yesterday' : 
+                                   `${daysSinceUpdate} days ago`}
+                                </Text>
+                                {daysSinceUpdate > 7 && (
+                                  <Text fontSize="xs" color="red.400">
+                                    Needs update
+                                  </Text>
+                                )}
+                              </VStack>
+                            </Td>
+                            <Td>
+                              <ReportButton
+                                reportType="price"
+                                targetId={submission.id}
+                                targetName={`${product.name} price at ${market?.name}`}
+                                variant="icon"
+                                size="sm"
+                              />
+                            </Td>
+                          </Tr>
+                        );
+                      })}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              </CardBody>
+            </Card>
+          </VStack>
         )}
       </VStack>
     </Container>
+    
+    {/* Quick Price Submission Button */}
+    <QuickPriceSubmissionButton />
+    </>
   );
 };
 

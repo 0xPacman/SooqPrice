@@ -11,10 +11,13 @@ import {
   AlertIcon,
   Flex,
   Icon,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { AddIcon } from '@chakra-ui/icons';
 import SwipeablePriceSubmissionDrawer from '../../components/forms/SwipeablePriceSubmissionDrawer';
+import { EnhancedPriceSubmissionModal } from '../../components/forms/EnhancedPriceSubmissionModal';
+import { MobilePriceSubmissionDrawer } from '../../components/forms/MobilePriceSubmissionDrawer';
 
 // Custom icons
 const PriceTagIcon = (props: any) => (
@@ -29,6 +32,9 @@ const PriceTagIcon = (props: any) => (
 const PriceSubmissionPage: React.FC = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  
+  // Use different components for mobile vs desktop
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   const handleSuccess = () => {
     onClose();
@@ -52,45 +58,57 @@ const PriceSubmissionPage: React.FC = () => {
           </Text>
         </Box>
 
-        {/* Info Alert */}
+        {/* Info Alert - Different messages for mobile vs desktop */}
         <Alert status="info" borderRadius="md">
           <AlertIcon />
           <VStack align="start" spacing={1}>
-            <Text fontWeight="bold">Tips for accurate price submissions:</Text>
-            <Text fontSize="sm">
-              • Verify current product prices
+            <Text fontWeight="bold">
+              {isMobile ? 'Mobile Submission Features:' : 'Tips for accurate price submissions:'}
             </Text>
-            <Text fontSize="sm">
-              • Choose product quality accurately
-            </Text>
-            <Text fontSize="sm">
-              • Add useful notes for buyers
-            </Text>
+            {isMobile ? (
+              <>
+                <Text fontSize="sm">• 📸 Camera capture or gallery selection</Text>
+                <Text fontSize="sm">• Take clear pictures with good lighting</Text>
+                <Text fontSize="sm">• Helps verify prices for other users</Text>
+                <Text fontSize="sm">• Easy photo capture with one tap</Text>
+              </>
+            ) : (
+              <>
+                <Text fontSize="sm">• Verify current product prices</Text>
+                <Text fontSize="sm">• Choose product quality accurately</Text>
+                <Text fontSize="sm">• Add useful notes for buyers</Text>
+                <Text fontSize="sm">• Upload photos from computer</Text>
+              </>
+            )}
           </VStack>
         </Alert>
 
-        {/* Main Action */}
+        {/* Main Action - Different buttons for mobile vs desktop */}
         <Box textAlign="center" py={8}>
-          <Button
-            size="lg"
-            colorScheme="green"
-            leftIcon={<AddIcon />}
-            onClick={onOpen}
-            w="full"
-            maxW="sm"
-            mx="auto"
-            h={16}
-            fontSize="lg"
-            borderRadius="xl"
-            shadow="lg"
-            _hover={{
-              transform: 'translateY(-2px)',
-              shadow: 'xl',
-            }}
-            transition="all 0.2s"
-          >
-            Add New Price
-          </Button>
+          <VStack spacing={4}>
+            <Button
+              size="lg"
+              colorScheme="green"
+              leftIcon={<AddIcon />}
+              onClick={onOpen}
+              w="full"
+              maxW="sm"
+              mx="auto"
+              h={16}
+              fontSize="lg"
+              borderRadius="xl"
+              shadow="lg"
+              _hover={{
+                transform: 'translateY(-2px)',
+                shadow: 'xl',
+              }}
+              transition="all 0.2s"
+            >
+              {isMobile ? 'Add Price' : 'Add New Price'}
+            </Button>
+            
+
+          </VStack>
         </Box>
 
         {/* Quick Stats */}
@@ -135,12 +153,27 @@ const PriceSubmissionPage: React.FC = () => {
         </VStack>
       </VStack>
 
-      {/* Price Submission Drawer */}
-      <SwipeablePriceSubmissionDrawer
-        isOpen={isOpen}
-        onClose={onClose}
-        onSuccess={handleSuccess}
-      />
+      {/* Price Submission Drawer */}        {/* Submission Components - Different for mobile vs desktop */}
+        {isMobile ? (
+          <MobilePriceSubmissionDrawer
+            isOpen={isOpen}
+            onClose={onClose}
+            onSuccess={handleSuccess}
+          />
+        ) : (
+          <EnhancedPriceSubmissionModal
+            isOpen={isOpen}
+            onClose={onClose}
+            onSuccess={handleSuccess}
+          />
+        )}
+
+        {/* Legacy drawer for fallback */}
+        <SwipeablePriceSubmissionDrawer
+          isOpen={false}
+          onClose={onClose}
+          onSuccess={handleSuccess}
+        />
     </Container>
   );
 };

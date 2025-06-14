@@ -18,13 +18,16 @@ import {
   TabPanel,
   Avatar,
   Divider,
-  Flex,
   IconButton,
-  useToast,
   Icon,
+  useColorModeValue,
+  AspectRatio,
+  Flex,
+  Tooltip,
 } from '@chakra-ui/react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowBackIcon, TimeIcon, StarIcon } from '@chakra-ui/icons';
+import { ArrowBackIcon, TimeIcon, ExternalLinkIcon } from '@chakra-ui/icons';
+import { openGoogleMaps } from '../../utils/mapsUtils';
 
 // Custom icons
 const LocationIcon = (props: any) => (
@@ -35,30 +38,18 @@ const LocationIcon = (props: any) => (
     />
   </Icon>
 );
-
-const PhoneIcon = (props: any) => (
-  <Icon viewBox="0 0 24 24" {...props}>
-    <path
-      fill="currentColor"
-      d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
-    />
-  </Icon>
-);
 import { 
   getMockMarketById,
   getMockCityById,
   getMockSubmissionsByMarket,
   mockProducts 
 } from '../../utils/mockData';
-import { useAuth } from '../../hooks/useAuth';
 import { Product, PriceSubmission } from '../../types';
 import { FloatingActionButton } from '../../components/ui/FloatingActionButton';
 import { ReportButton } from '../../components/ui/ReportButton';
 
 const MarketDetailPage: React.FC = () => {
   const { marketId } = useParams<{ marketId: string }>();
-  const { user } = useAuth();
-  const toast = useToast();
   const [activeTab, setActiveTab] = useState(0);
 
   if (!marketId) {
@@ -133,77 +124,167 @@ const MarketDetailPage: React.FC = () => {
     return currentTime >= daySchedule.open && currentTime <= daySchedule.close;
   };
 
-  const handleSubmitPrice = () => {
-    if (!user?.isAuthenticated) {
-      toast({
-        title: 'Authentication Required',
-        description: 'Please log in to submit prices',
-        status: 'warning',
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    
-    // Navigate to price submission form
-    // This would be implemented in the next phase
-    toast({
-      title: 'Coming Soon',
-      description: 'Price submission form will be available soon',
-      status: 'info',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
-
   return (
     <>
-      <Container maxW="container.xl">
-      <VStack spacing={6} align="stretch">
-        {/* Back Button */}
-        <HStack>
-          <IconButton
-            as={Link}
-            to="/markets"
-            aria-label="Back to markets"
-            icon={<ArrowBackIcon />}
-            variant="ghost"
-            size="lg"
-          />
-          <Text color="gray.600">Back to Markets</Text>
-        </HStack>
-
-        {/* Market Header */}
-        <Card>
-          <CardBody>
-            <VStack align="start" spacing={4}>
-              <HStack justify="space-between" w="full" align="start">
-                <VStack align="start" spacing={2} flex={1}>
-                  <Heading size="xl">{market.name}</Heading>
-                  <Text fontSize="lg" color="gray.600">{market.address}</Text>
+      <Container maxW="container.xl" py={6}>
+        <VStack spacing={8} align="stretch">
+          {/* Enhanced Header */}
+          <Card bg={useColorModeValue('gray.50', 'gray.900')} borderRadius="xl">
+            <CardBody py={4}>
+              <HStack spacing={4}>
+                <IconButton
+                  as={Link}
+                  to="/markets"
+                  aria-label="Back to markets"
+                  icon={<ArrowBackIcon />}
+                  variant="ghost"
+                  size="lg"
+                  borderRadius="full"
+                  bg={useColorModeValue('white', 'gray.700')}
+                  shadow="md"
+                  _hover={{ transform: 'translateX(-2px)', shadow: 'lg' }}
+                  transition="all 0.2s ease"
+                />
+                <VStack align="start" spacing={0}>
+                  <Text fontWeight="bold" color={useColorModeValue('gray.700', 'gray.300')}>
+                    Market Details
+                  </Text>
+                  <Text fontSize="sm" color={useColorModeValue('gray.500', 'gray.400')}>
+                    Back to Markets
+                  </Text>
                 </VStack>
-                
-                <VStack align="end" spacing={2}>
-                  <HStack>
+              </HStack>
+            </CardBody>
+          </Card>
+
+          {/* Enhanced Market Header */}
+          <Card shadow="xl" borderRadius="2xl" bg={useColorModeValue('white', 'gray.800')}>
+            <CardBody p={8}>
+              <VStack spacing={6} align="stretch">
+                {/* Market Header */}
+                <Flex 
+                  direction={{ base: 'column', md: 'row' }} 
+                  align={{ base: 'center', md: 'start' }} 
+                  gap={6}
+                >
+                  <Box>
+                    <AspectRatio ratio={1} w="120px">
+                      <Flex
+                        align="center"
+                        justify="center"
+                        bgGradient={
+                          market.marketType === 'traditional' 
+                            ? 'linear(to-br, orange.400, red.500)'
+                            : market.marketType === 'modern'
+                            ? 'linear(to-br, blue.400, purple.500)'
+                            : 'linear(to-br, purple.400, pink.500)'
+                        }
+                        color="white"
+                        borderRadius="2xl"
+                        fontSize="4xl"
+                      >
+                        🏪
+                      </Flex>
+                    </AspectRatio>
+                  </Box>
+                  
+                  <VStack align={{ base: 'center', md: 'start' }} spacing={3} flex={1}>
+                    <Heading 
+                      size="2xl" 
+                      textAlign={{ base: 'center', md: 'left' }}
+                      bgGradient="linear(to-r, green.400, blue.500)"
+                      bgClip="text"
+                    >
+                      {market.name}
+                    </Heading>
+                    
+                    <HStack spacing={3} flexWrap="wrap" justify={{ base: 'center', md: 'start' }}>
+                      <Badge
+                        colorScheme={isMarketOpen() ? 'green' : 'red'}
+                        variant="solid"
+                        px={4}
+                        py={2}
+                        borderRadius="full"
+                        fontSize="sm"
+                        fontWeight="bold"
+                      >
+                        {isMarketOpen() ? '🟢 Open Now' : '🔴 Closed'}
+                      </Badge>
+                      
+                      <Badge
+                        colorScheme={
+                          market.marketType === 'traditional' ? 'orange' :
+                          market.marketType === 'modern' ? 'blue' : 'purple'
+                        }
+                        variant="outline"
+                        px={3}
+                        py={1}
+                        borderRadius="full"
+                        fontSize="xs"
+                      >
+                        {market.marketType}
+                      </Badge>
+                    </HStack>
+                    
+                    <HStack spacing={2} justify={{ base: 'center', md: 'start' }}>
+                      <LocationIcon color="gray.500" />
+                      <Text 
+                        fontSize="lg" 
+                        color={useColorModeValue('gray.600', 'gray.300')}
+                        textAlign={{ base: 'center', md: 'left' }}
+                      >
+                        {market.address}
+                      </Text>
+                    </HStack>
+                    
+                    <Text 
+                      fontSize="md" 
+                      color={useColorModeValue('gray.500', 'gray.400')}
+                      textAlign={{ base: 'center', md: 'left' }}
+                    >
+                      {city?.name}, {city?.region}
+                    </Text>
+                  </VStack>
+                  
+                  <VStack spacing={3}>
+                    <Tooltip label="View on Google Maps" hasArrow>
+                      <Button
+                        colorScheme="blue"
+                        size="lg"
+                        leftIcon={<ExternalLinkIcon />}
+                        borderRadius="full"
+                        onClick={() => openGoogleMaps(market.coordinates, market.name)}
+                        _hover={{ transform: 'translateY(-2px)', shadow: 'lg' }}
+                        transition="all 0.2s ease"
+                      >
+                        View on Maps
+                      </Button>
+                    </Tooltip>
+                    
                     <ReportButton
                       reportType="market"
                       targetId={market.id}
                       targetName={market.name}
-                      variant="icon"
+                      variant="button"
                       size="sm"
                     />
-                    <Badge 
-                      colorScheme={isMarketOpen() ? 'green' : 'red'}
-                      fontSize="md"
-                      p={2}
-                    >
-                      {isMarketOpen() ? 'Open Now' : 'Closed'}
-                    </Badge>
-                  </HStack>
-                  <Badge 
+                  </VStack>
+                </Flex>
+              </VStack>
+            </CardBody>
+          </Card>
+
+        {/* Market Details and Statistics */}
+        <Card shadow="lg" borderRadius="xl">
+          <CardBody p={6}>
+            <VStack spacing={6} align="stretch">
+              <HStack justify="space-between" align="center" flexWrap="wrap">
+                <VStack align="start" spacing={2}>
+                  <Heading size="md">Market Information</Heading>
+                  <Badge
                     colorScheme={
                       market.marketType === 'traditional' ? 'orange' :
-                      market.marketType === 'modern' ? 'blue' : 'purple'
+                      market.marketType === 'modern' ? 'blue' : 'green'
                     }
                     textTransform="capitalize"
                   >
@@ -246,20 +327,6 @@ const MarketDetailPage: React.FC = () => {
                   </Text>
                 </VStack>
               </SimpleGrid>
-
-              {user?.isAuthenticated && (
-                <>
-                  <Divider />
-                  <Button 
-                    colorScheme="green" 
-                    size="lg"
-                    leftIcon={<StarIcon />}
-                    onClick={handleSubmitPrice}
-                  >
-                    Submit Price Update
-                  </Button>
-                </>
-              )}
             </VStack>
           </CardBody>
         </Card>
@@ -333,11 +400,6 @@ const MarketDetailPage: React.FC = () => {
                   <Text color="gray.400" mb={4}>
                     Be the first to submit price information for this market
                   </Text>
-                  {user?.isAuthenticated && (
-                    <Button colorScheme="green" onClick={handleSubmitPrice}>
-                      Submit First Price
-                    </Button>
-                  )}
                 </Box>
               )}
             </TabPanel>

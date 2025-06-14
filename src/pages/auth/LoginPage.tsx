@@ -61,8 +61,8 @@ const LoginPage: React.FC = () => {
       minH="100vh" 
       bg="linear-gradient(135deg, #4A9B3B 0%, #2D5E1F 100%)"
       display="flex"
-      align="center"
-      justify="center"
+      alignItems="center"
+      justifyContent="center"
       p={4}
     >
       <Container maxW="md">
