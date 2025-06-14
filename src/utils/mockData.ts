@@ -1496,7 +1496,7 @@ export const mockMarkets: Market[] = [
     name: 'Souk El Fouki Tetouan',
     nameAr: 'Souk El Fouki Tetouan',
     nameFr: 'Souk El Fouki Tetouan',
-    address: 'Medina, Tétouan',
+    address: 'Medina, Tétouان',
     coordinates: { lat: 35.5785, lng: -5.3684 },
     openingHours: {
       monday: { open: '07:00', close: '19:00' },
@@ -2557,20 +2557,18 @@ export const mockPriceSubmissions: PriceSubmission[] = [
   },
 ];
 
-// Helper functions for mock data
+// Helper functions for accessing mock data
+export const getMockUserById = (id: string): User | undefined => 
+  mockUsers.find(user => user.id === id);
+
+export const getMockProductById = (id: string): Product | undefined => 
+  mockProducts.find(product => product.id === id);
+
 export const getMockCityById = (id: string): City | undefined => 
   mockCities.find(city => city.id === id);
 
 export const getMockMarketById = (id: string): Market | undefined => 
   mockMarkets.find(market => market.id === id);
-
-// Get product by id
-export const getMockProductById = (productId: string): Product | undefined => {
-  return mockProducts.find(product => product.id === productId);
-};
-
-export const getMockUserById = (id: string): User | undefined => 
-  mockUsers.find(user => user.id === id);
 
 export const getMockMarketsByCity = (cityId: string): Market[] => 
   mockMarkets.filter(market => market.cityId === cityId);
@@ -2616,4 +2614,146 @@ export const getMockLatestPrices = (productId: string): PriceSubmission[] => {
   });
   
   return Array.from(latestByMarket.values());
+};
+
+// Historical price data generation for charts
+export interface PriceHistoryPoint {
+  date: string;
+  timestamp: number;
+  marketId: string;
+  marketName: string;
+  price: number;
+  quality: string;
+  submissionDate: Date;
+}
+
+// Generate realistic historical price data for a product
+export const generateMockPriceHistory = (productId: string, days: number = 90): PriceHistoryPoint[] => {
+  const product = getMockProductById(productId);
+  if (!product) return [];
+
+  const history: PriceHistoryPoint[] = [];
+  const relevantMarkets = mockMarkets.slice(0, 5); // Use first 5 markets for demo
+  
+  // Base price ranges for different product categories
+  const basePriceRanges: Record<string, { min: number, max: number, volatility: number }> = {
+    'Vegetables': { min: 3, max: 15, volatility: 0.15 },
+    'Fruits': { min: 5, max: 25, volatility: 0.20 },
+    'Meat': { min: 40, max: 120, volatility: 0.10 },
+    'Dairy': { min: 8, max: 35, volatility: 0.08 },
+    'Grains': { min: 4, max: 18, volatility: 0.12 },
+    'Spices': { min: 15, max: 80, volatility: 0.25 },
+    'Seafood': { min: 30, max: 100, volatility: 0.18 },
+    'Herbs': { min: 2, max: 12, volatility: 0.20 },
+    'Nuts': { min: 20, max: 60, volatility: 0.15 },
+    'Oils': { min: 25, max: 80, volatility: 0.12 },
+  };
+
+  const priceRange = basePriceRanges[product.category] || basePriceRanges['Vegetables'];
+  const basePrice = (priceRange.min + priceRange.max) / 2;
+
+  // Generate data for each day
+  for (let i = days; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dateString = date.toISOString().split('T')[0];
+
+    // Each market may have different prices and not all markets submit every day
+    relevantMarkets.forEach((market, marketIndex) => {
+      // Not every market submits every day (70% chance)
+      if (Math.random() > 0.3) {
+        // Market-specific price variations
+        const marketMultiplier = 0.85 + (marketIndex * 0.05); // Different markets have different price levels
+        
+        // Seasonal trends (simulate seasonal price changes)
+        const dayOfYear = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+        const seasonalMultiplier = 1 + 0.1 * Math.sin((dayOfYear / 365) * 2 * Math.PI);
+        
+        // Weekly patterns (weekend prices might be different)
+        const dayOfWeek = date.getDay();
+        const weekendMultiplier = (dayOfWeek === 0 || dayOfWeek === 6) ? 1.05 : 1.0;
+        
+        // Random daily variation
+        const randomVariation = 1 + (Math.random() - 0.5) * priceRange.volatility * 2;
+        
+        // Long-term trend (slight increase over time)
+        const trendMultiplier = 1 + (days - i) * 0.001;
+        
+        const finalPrice = basePrice * marketMultiplier * seasonalMultiplier * weekendMultiplier * randomVariation * trendMultiplier;
+        
+        // Ensure price stays within reasonable bounds
+        const clampedPrice = Math.max(priceRange.min, Math.min(priceRange.max, finalPrice));
+        
+        // Random quality distribution
+        const qualityRandom = Math.random();
+        let quality: string;
+        if (qualityRandom > 0.7) quality = 'premium';
+        else if (qualityRandom > 0.4) quality = 'good';
+        else quality = 'fair';
+
+        history.push({
+          date: dateString,
+          timestamp: date.getTime(),
+          marketId: market.id,
+          marketName: market.name,
+          price: parseFloat(clampedPrice.toFixed(2)),
+          quality,
+          submissionDate: date,
+        });
+      }
+    });
+  }
+
+  return history.sort((a, b) => a.timestamp - b.timestamp);
+};
+
+// Get price history for a specific product with caching simulation
+const priceHistoryCache = new Map<string, PriceHistoryPoint[]>();
+
+export const getMockPriceHistory = (productId: string, days: number = 90): PriceHistoryPoint[] => {
+  const cacheKey = `${productId}-${days}`;
+  
+  if (!priceHistoryCache.has(cacheKey)) {
+    priceHistoryCache.set(cacheKey, generateMockPriceHistory(productId, days));
+  }
+  
+  return priceHistoryCache.get(cacheKey) || [];
+};
+
+// Get price statistics for a product
+export const getMockPriceStatistics = (productId: string) => {
+  const history = getMockPriceHistory(productId);
+  const prices = history.map(h => h.price);
+  
+  if (prices.length === 0) {
+    return {
+      current: 0,
+      average: 0,
+      min: 0,
+      max: 0,
+      change: 0,
+      changePercent: 0,
+      trend: 'stable' as const,
+    };
+  }
+
+  const current = prices[prices.length - 1];
+  const previous = prices.length > 1 ? prices[prices.length - 2] : current;
+  const average = prices.reduce((sum, price) => sum + price, 0) / prices.length;
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  const change = current - previous;
+  const changePercent = previous ? (change / previous) * 100 : 0;
+  
+  const trend = changePercent > 1 ? 'up' : changePercent < -1 ? 'down' : 'stable';
+
+  return {
+    current: parseFloat(current.toFixed(2)),
+    average: parseFloat(average.toFixed(2)),
+    min: parseFloat(min.toFixed(2)),
+    max: parseFloat(max.toFixed(2)),
+    change: parseFloat(change.toFixed(2)),
+    changePercent: parseFloat(changePercent.toFixed(2)),
+    trend,
+  };
 };

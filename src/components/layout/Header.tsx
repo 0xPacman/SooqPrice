@@ -50,6 +50,13 @@ const Header: React.FC = () => {
   const navButtonColor = useColorModeValue('gray.600', 'gray.300');
   const navButtonHoverColor = useColorModeValue('green.500', 'green.400');
   const navButtonActiveBg = useColorModeValue('green.50', 'green.900');
+  const headerGradient = useColorModeValue(
+    'linear(to-r, white, gray.50)',
+    'linear(to-r, gray.800, gray.900)'
+  );
+  const searchBorderColor = useColorModeValue('gray.200', 'gray.600');
+  const textColor = useColorModeValue('gray.800', 'white');
+  const mobileDrawerBg = useColorModeValue('gray.50', 'gray.700');
 
   const handleLogout = () => {
     logout();
@@ -120,10 +127,7 @@ const Header: React.FC = () => {
       borderColor={borderColor}
       boxShadow="sm"
       backdropFilter="blur(10px)"
-      bgGradient={useColorModeValue(
-        'linear(to-r, white, gray.50)',
-        'linear(to-r, gray.800, gray.900)'
-      )}
+      bgGradient={headerGradient}
     >
       <Flex
         maxW="container.xl"
@@ -191,7 +195,7 @@ const Header: React.FC = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   bg={searchBg}
                   border="1px"
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderColor={searchBorderColor}
                   borderRadius="full"
                   _hover={{ borderColor: 'green.300' }}
                   _focus={{ 
@@ -284,7 +288,7 @@ const Header: React.FC = () => {
                       transition="border-color 0.2s ease"
                     />
                     <Box display={{ base: "none", md: "block" }} textAlign="left">
-                      <Text fontSize="sm" fontWeight="medium" color={useColorModeValue('gray.800', 'white')}>
+                      <Text fontSize="sm" fontWeight="medium" color={textColor}>
                         {user.profile?.fullName}
                       </Text>
                       <HStack spacing={1}>
@@ -386,7 +390,7 @@ const Header: React.FC = () => {
             <VStack spacing={4} align="stretch">
               {user?.isAuthenticated ? (
                 <>
-                  <Box p={4} bg={useColorModeValue('gray.50', 'gray.700')} borderRadius="lg">
+                  <Box p={4} bg={mobileDrawerBg} borderRadius="lg">
                     <HStack spacing={3}>
                       <Avatar 
                         size="md" 

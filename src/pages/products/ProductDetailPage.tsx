@@ -31,10 +31,12 @@ import {
 import { Link, useParams } from 'react-router-dom';
 import { ArrowBackIcon, ViewIcon } from '@chakra-ui/icons';
 import { ImageCarousel } from '@/components/common/ImageCarousel';
+import { PriceHistoryChart } from '@/components/common/PriceHistoryChart';
 import { 
   getMockProductById,
   getMockSubmissionsByProduct,
   getMockLatestPrices,
+  getMockPriceHistory,
   mockMarkets,
   mockCities
 } from '../../utils/mockData';
@@ -118,6 +120,7 @@ const ProductDetailPage: React.FC = () => {
   const product = getMockProductById(productId);
   const submissions = getMockSubmissionsByProduct(productId);
   const latestPrices = getMockLatestPrices(productId);
+  const priceHistory = getMockPriceHistory(productId, 90);
 
   if (!product) {
     return (
@@ -362,6 +365,14 @@ const ProductDetailPage: React.FC = () => {
             />
           </CardBody>
         </Card>
+
+        {/* Price History Chart */}
+        {priceHistory.length > 0 && (
+          <PriceHistoryChart
+            productName={product.name}
+            priceHistory={priceHistory}
+          />
+        )}
 
         {submissions.length === 0 && (
           <Alert status="info">
